@@ -189,6 +189,18 @@ export class Client {
           },
         );
       }
+
+      createSecret(
+        id: string,
+        data: {
+          expiresAt?: string;
+        },
+      ) {
+        const { operation } = this.client.prepare<{
+          secret: string;
+        }>(`/:id/secret`, "POST", data, { id });
+        return operation;
+      }
     })(this, "/reports");
   }
 
