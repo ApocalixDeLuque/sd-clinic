@@ -1,16 +1,11 @@
-import axios, { AxiosInstance, Method, RawAxiosRequestHeaders } from "axios";
-import { makeURL } from "@nauverse/make-url";
-import useSWR, { SWRConfiguration, SWRResponse } from "swr";
+import axios, { AxiosInstance, Method, RawAxiosRequestHeaders } from 'axios';
+import { makeURL } from '@nauverse/make-url';
+import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
 
 interface Request {
   url: string;
   method: Method;
-  data:
-    | Record<string, unknown>
-    | Record<string, unknown>[]
-    | FormData
-    | string
-    | undefined;
+  data: Record<string, unknown> | Record<string, unknown>[] | FormData | string | undefined;
   params: Record<string, unknown> | FormData | undefined;
   headers: RawAxiosRequestHeaders;
 }
@@ -23,16 +18,13 @@ function buildQueryString(params: Record<string, unknown>): string {
       const value = params[key];
       return `${key}=${encodeURI(String(value))}`;
     })
-    .join("&");
+    .join('&');
 
   return queryString;
 }
 
 export class ApiError extends Error {
-  constructor(
-    message: string,
-    public readonly httpCode: number,
-  ) {
+  constructor(message: string, public readonly httpCode: number) {
     super(message);
   }
 }
@@ -40,22 +32,19 @@ export class ApiError extends Error {
 export class Client {
   private readonly client: AxiosInstance;
   private readonly t: string;
-  private route: "admin" | "user" | "auth" | "public" = "admin";
+  private route: 'admin' | 'user' | 'auth' | 'public' = 'admin';
 
-  constructor(
-    private readonly baseUrl: string,
-    t: string,
-  ) {
+  constructor(private readonly baseUrl: string, t: string) {
     this.t = t;
 
     this.client = axios.create({
       headers: {
-        Accept: "application/json",
+        Accept: 'application/json',
       },
     });
   }
 
-  setScope(scope: "admin" | "user" | "auth" | "public") {
+  setScope(scope: 'admin' | 'user' | 'auth' | 'public') {
     this.route = scope;
   }
 
@@ -64,68 +53,44 @@ export class Client {
   }
 
   get hasToken() {
-    return this.t !== "";
+    return this.t !== '';
   }
 
   get auth() {
     return new (class Auth extends BaseAction {
       login(data: { id: string; password: string }) {
-        const { operation } = this.client.prepare<{ token: string }>(
-          "login",
-          "POST",
-          data,
-          undefined,
-          {
-            route: "auth",
-          },
-        );
+        const { operation } = this.client.prepare<{ token: string }>('login', 'POST', data, undefined, {
+          route: 'auth',
+        });
         return operation;
       }
 
       renew(token: string) {
-        const { operation } = this.client.prepare<{ token: string }>(
-          "renew",
-          "POST",
-          { token },
-        );
+        const { operation } = this.client.prepare<{ token: string }>('renew', 'POST', { token });
         return operation;
       }
 
-      register(data: { id: string; password: string }) {
-        const { operation } = this.client.prepare<{ token: string }>(
-          "register",
-          "POST",
-          data,
-          undefined,
-          {
-            route: "auth",
-          },
-        );
+      register(data: { name: string; email: string; phone: string; password: string }) {
+        const { operation } = this.client.prepare<{ token: string }>('create', 'POST', data, undefined, {
+          route: 'auth',
+        });
         return operation;
       }
-    })(this, "");
+    })(this, '');
   }
 
   prepare<T>(
     path: string,
     method: Method,
-    body?:
-      | Record<string, unknown>
-      | Record<string, unknown>[]
-      | FormData
-      | string,
+    body?: Record<string, unknown> | Record<string, unknown>[] | FormData | string,
     params?: Record<string, unknown>,
     config?: {
       removeAuth?: boolean;
-      route?: "admin" | "user" | "auth" | "public";
-    },
+      route?: 'admin' | 'user' | 'auth' | 'public';
+    }
   ) {
-    const route = makeURL(
-      this.baseUrl,
-      "/",
-      config?.route ?? this.route ?? "admin",
-    );
-    let url = makeURL(route, "/", path);
+    const route = makeURL(this.baseUrl, '/', config?.route ?? this.route ?? 'admin');
+    let url = makeURL(route, '/', path);
 
     if (params) {
       url = makeURL(url, {
@@ -133,8 +98,8 @@ export class Client {
       });
     }
 
-    if (method === "GET" && body) {
-      if (typeof body === "string") {
+    if (method === 'GET' && body) {
+      if (typeof body === 'string') {
         url = `${url}?${body}`;
       } else {
         const params = buildQueryString(body as Record<string, unknown>);
@@ -154,7 +119,7 @@ export class Client {
     const request = {
       url,
       method,
-      data: method !== "GET" ? body : undefined,
+      data: method !== 'GET' ? body : undefined,
       params: undefined,
       headers,
     };
@@ -204,18 +169,18 @@ export abstract class BaseAction {
   constructor(
     public readonly client: Client,
     public readonly endpoint: string,
-    public readonly routeType: "admin" | "user" | "auth" | "public" = "admin",
+    public readonly routeType: 'admin' | 'user' | 'auth' | 'public' = 'admin'
   ) {}
 
   useSwr<B>(
     func: (action: this) => Route<B>,
-    condition = true,
+    condition = true
   ): (conf?: SWRConfiguration<B, unknown>) => SWRResponse<B> {
     return (conf?: SWRConfiguration<B, unknown>) => {
       if (!condition)
         return useSWR(
           () => undefined,
-          () => Promise.reject(),
+          () => Promise.reject()
         );
 
       const { submit, route } = func(this);

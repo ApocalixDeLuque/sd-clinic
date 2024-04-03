@@ -1,16 +1,19 @@
 import React from 'react';
 import SectionsMenu from './SectionsMenu';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { useSession } from '@/api/session';
 
 const ProfileCard = () => {
+  const { user } = useSession();
   const session = useSession();
 
   return (
-    <div className="flex flex-col w-full items-center justify-between border rounded-lg p-4 gap-8">
+    <div className="flex flex-col w-full lg:w-fit lg:min-w-[400px] lg:h-fit items-center justify-between border rounded-lg p-4 gap-8">
       <div className="flex w-full items-center gap-2">
-        <img src="/images/pfp.png" alt="logo" />
+        {user?.isAdmin ? (
+          <img src="/images/men.png" className="w-[100px]" alt="logo" />
+        ) : (
+          <img src="/images/women.png" className="w-[100px]" alt="logo" />
+        )}
         <div className="flex flex-col gap-2">
           <p className="font-bold">{session.user?.name ?? 'Sin Nombre'}</p>
           <div>

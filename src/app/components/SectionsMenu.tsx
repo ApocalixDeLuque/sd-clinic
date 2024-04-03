@@ -1,9 +1,11 @@
 'use client';
 import React, { useState } from 'react';
 import Button from './Button';
+import { useSession } from '@/api/session';
 
 const SectionsMenu = () => {
-  const [selectedButton, setSelectedButton] = useState('Mis Ultrasonidos');
+  const { user } = useSession();
+  const [selectedButton, setSelectedButton] = useState(user?.isAdmin ? 'Mis Pacientes' : 'Mis Ultrasonidos');
 
   const handleButtonClick = (buttonText: string) => {
     setSelectedButton(buttonText);
@@ -12,24 +14,14 @@ const SectionsMenu = () => {
   return (
     <div className="flex flex-col w-full gap-[10px]">
       <Button
-        text="Mis Ultrasonidos"
-        selected={selectedButton === 'Mis Ultrasonidos'}
-        onClick={() => handleButtonClick('Mis Ultrasonidos')}
-      />
-      <Button
-        text="Cronología"
-        selected={selectedButton === 'Cronología'}
-        onClick={() => handleButtonClick('Cronología')}
+        text={user?.isAdmin ? 'Mis Pacientes' : 'Mis Ultrasonidos'}
+        selected={selectedButton === (user?.isAdmin ? 'Mis Pacientes' : 'Mis Ultrasonidos')}
+        onClick={() => handleButtonClick(user?.isAdmin ? 'Mis Pacientes' : 'Mis Ultrasonidos')}
       />
       <Button
         text="Próximas citas"
         selected={selectedButton === 'Próximas citas'}
         onClick={() => handleButtonClick('Próximas citas')}
-      />
-      <Button
-        text="Contacta con un médico"
-        selected={selectedButton === 'Contacta con un médico'}
-        onClick={() => handleButtonClick('Contacta con un médico')}
       />
     </div>
   );
