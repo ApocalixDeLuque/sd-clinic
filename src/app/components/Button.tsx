@@ -8,11 +8,13 @@ interface ButtonProps {
   link?: string;
   onClick?: () => void;
   selected?: boolean;
+  submit?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({ text, color = 'green', link, onClick, selected }) => {
+const Button: React.FC<ButtonProps> = ({ submit, text, color = 'green', link, onClick, selected }) => {
   const ButtonContent = () => (
     <button
+      type={submit ? 'submit' : 'button'}
       className={`w-full text-center font-medium ${
         color === 'pink'
           ? selected

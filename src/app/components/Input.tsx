@@ -6,11 +6,12 @@ interface InputProps {
   placeholder: string;
   onInputChange: (input: string) => void;
   error?: boolean;
-  isClicked: boolean;
-  setIsClicked: (clicked: boolean) => void;
+  isClicked: boolean; // Añade esta línea
+  setIsClicked: (clicked: boolean) => void; // Añade esta línea
+  type?: React.InputHTMLAttributes<HTMLInputElement>['type'];
 }
 
-const Input: React.FC<InputProps> = ({ placeholder, onInputChange, error, isClicked, setIsClicked }) => {
+const Input: React.FC<InputProps> = ({ type, placeholder, onInputChange, error, isClicked, setIsClicked }) => {
   const [inputValue, setInputValue] = useState('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,7 +25,7 @@ const Input: React.FC<InputProps> = ({ placeholder, onInputChange, error, isClic
 
   return (
     <input
-      type="text"
+      type={type}
       placeholder={placeholder}
       value={inputValue}
       onChange={handleChange}
