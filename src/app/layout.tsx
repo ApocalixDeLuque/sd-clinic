@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SessionContext } from "@/api/session";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Toaster />
         <SessionContext>{children}</SessionContext>
       </body>
     </html>

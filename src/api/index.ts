@@ -198,7 +198,7 @@ export class Client {
       ) {
         const { operation } = this.client.prepare<{
           secret: string;
-        }>(`/:id/secret`, "POST", data, { id });
+        }>(this.endpoint + `/:id/secret`, "POST", data, { id });
         return operation;
       }
     })(this, "/reports");

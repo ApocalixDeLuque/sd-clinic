@@ -1,9 +1,9 @@
-'use client';
-import UltrasoundCard from '../components/UltrasoundCard';
-import Navbar from '../components/Navbar';
-import ProfileCard from '../components/ProfileCard';
-import { useSession } from '@/api/session';
-import { useAuthenticated } from '../hooks/useAuthenticated';
+"use client";
+import UltrasoundCard from "../components/UltrasoundCard";
+import Navbar from "../components/Navbar";
+import ProfileCard from "../components/ProfileCard";
+import { useSession } from "@/api/session";
+import { useAuthenticated } from "../hooks/useAuthenticated";
 import { useClient } from "@/api/context";
 
 export default function ProfilePage() {
