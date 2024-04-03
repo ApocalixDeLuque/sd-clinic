@@ -2,7 +2,6 @@
 import UltrasoundCard from '../components/UltrasoundCard';
 import Navbar from '../components/Navbar';
 import ProfileCard from '../components/ProfileCard';
-import PregnantProgressBar from '../components/PregnantProgressBar';
 import { useSession } from '@/api/session';
 import { useAuthenticated } from '../hooks/useAuthenticated';
 
