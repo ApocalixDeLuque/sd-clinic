@@ -1,9 +1,16 @@
+"use client";
 import UltrasoundCard from '../components/UltrasoundCard';
 import Navbar from '../components/Navbar';
 import ProfileCard from '../components/ProfileCard';
 import PregnantProgressBar from '../components/PregnantProgressBar';
+import { useSession } from '@/api/session';
+import { useAuthenticated } from '../hooks/useAuthenticated';
 
 export default function ProfilePage() {
+  const session = useSession();
+
+  useAuthenticated();
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between bg-white text-black">
       {/* Navbar */}
