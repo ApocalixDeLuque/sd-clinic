@@ -79,7 +79,7 @@ export default function LoginPage() {
           <div className="flex flex-col w-full items-center gap-2">
             <p className="text-red-400">{errorMessage}</p>
             <p>¿No tienes cuenta?</p>
-            <Link href={'/register'} className="text-green-600 font-bold">
+            <Link href={'/register'} className="text-verde-salud font-bold">
               Registrate aquí
             </Link>
           </div>

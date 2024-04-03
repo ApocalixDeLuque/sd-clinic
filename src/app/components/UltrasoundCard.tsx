@@ -3,6 +3,7 @@ import Button from './Button';
 
 interface UltrasoundCardProps {
   date: string;
+  images: string[];
   comments: string;
   gestation: string;
   weight: string;

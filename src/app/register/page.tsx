@@ -128,11 +128,11 @@ export default function RegisterPage() {
               setIsClicked={setPasswordClicked}
             />
           </div>
-          <Button text="Registrate" color="green" selected onClick={handleButtonClick} />
+          <Button text="Registrate" selected onClick={handleButtonClick} />
           <div className="flex flex-col w-full items-center gap-2">
             <p className="text-red-400">{errorMessage}</p>
             <p>¿Ya tienes cuenta?</p>
-            <Link href={'/'} className="text-green-600 font-bold">
+            <Link href={'/'} className="text-verde-salud font-bold">
               Inicia sesión
             </Link>
           </div>

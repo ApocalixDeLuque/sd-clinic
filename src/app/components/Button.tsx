@@ -11,7 +11,7 @@ interface ButtonProps {
   selected?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({ text, color = 'pink', link, onClick, selected }) => {
+const Button: React.FC<ButtonProps> = ({ text, color = 'green', link, onClick, selected }) => {
   const ButtonContent = () => (
     <button
       className={`w-full text-center font-medium ${
@@ -25,8 +25,8 @@ const Button: React.FC<ButtonProps> = ({ text, color = 'pink', link, onClick, se
             : 'border-blue-400 text-blue-400'
           : color === 'green'
           ? selected
-            ? 'bg-green-600 border-green-600 text-white'
-            : 'border-green-600 text-green-600'
+            ? 'bg-verde-salud border-verde-salud text-white'
+            : 'border-verde-salud text-verde-salud'
           : ''
       } border-2 rounded-lg py-1`}
       onClick={onClick}
