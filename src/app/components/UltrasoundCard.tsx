@@ -1,26 +1,35 @@
+'use client';
 import React from 'react';
 import Button from './Button';
+import { useRouter } from 'next/navigation';
 
 interface UltrasoundCardProps {
+  id: string;
   date: string;
-  images: string[];
+  images?: string[];
   comments: string;
   gestation: string;
   weight: string;
   health: string;
   nextAppointment: string;
-  onClick?: () => void;
 }
 
 const UltrasoundCard: React.FC<UltrasoundCardProps> = ({
+  id,
   date,
   comments,
   gestation,
   weight,
   health,
   nextAppointment,
-  onClick,
 }) => {
+  const router = useRouter();
+  const handleButtonClick = () => {
+    router.push(`/reports/${id}`);
+
+    console.log('asdclick123');
+  };
+
   return (
     <div className="flex flex-col w-full items-center gap-4">
       <p className="font-bold text-sm self-start">{date}</p>
@@ -63,8 +72,8 @@ const UltrasoundCard: React.FC<UltrasoundCardProps> = ({
         </div>
       </div>
       <div className="flex w-full gap-2">
-        <Button color="blue" text="Más información" />
-        <Button color="blue" text="Compartir resultado" />
+        <Button color="blue" text="Más información" onClick={handleButtonClick} selected />
+        <Button color="blue" text="Compartir resultado" selected />
       </div>
     </div>
   );

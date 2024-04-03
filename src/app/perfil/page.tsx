@@ -1,7 +1,6 @@
 import UltrasoundCard from '../components/UltrasoundCard';
 import Navbar from '../components/Navbar';
 import ProfileCard from '../components/ProfileCard';
-import PregnantProgressBar from '../components/PregnantProgressBar';
 
 export default function ProfilePage() {
   return (
@@ -25,6 +24,7 @@ export default function ProfilePage() {
         <div className="flex flex-col w-full items-center justify-between border rounded-lg p-4 gap-16">
           <p className="font-bold text-lg">Mis Ultrasonidos</p>
           <UltrasoundCard
+            id="bebe1ultrasonido"
             date="12 de Enero de 2024"
             comments="Desarrollo normal, sin anomalías detectadas.Desarrollo normal, sin anomalías detectadas."
             gestation="20 semanas y 3 día"
@@ -33,6 +33,7 @@ export default function ProfilePage() {
             nextAppointment="22 de Marzo del 2024 a las 10:00 AM"
           />
           <UltrasoundCard
+            id="bebe2ultrasonido"
             date="2 de Abril del 2024"
             comments="Gemelos creciendo saludablemente y con buen peso."
             gestation="24 semanas y 1 día"

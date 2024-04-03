@@ -6,8 +6,8 @@ interface InputProps {
   placeholder: string;
   onInputChange: (input: string) => void;
   error?: boolean;
-  isClicked: boolean; // Añade esta línea
-  setIsClicked: (clicked: boolean) => void; // Añade esta línea
+  isClicked: boolean;
+  setIsClicked: (clicked: boolean) => void;
 }
 
 const Input: React.FC<InputProps> = ({ placeholder, onInputChange, error, isClicked, setIsClicked }) => {
