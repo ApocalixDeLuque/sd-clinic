@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, Method, RawAxiosRequestHeaders } from 'axios';
 import { makeURL } from '@nauverse/make-url';
 import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
+import type { Report } from './entities';
 
 interface Request {
   url: string;
@@ -70,13 +71,121 @@ export class Client {
         return operation;
       }
 
-      register(data: { name: string; email: string; phone: string; password: string }) {
-        const { operation } = this.client.prepare<{ token: string }>('create', 'POST', data, undefined, {
+      register(data: { id: string; password: string }) {
+        const { operation } = this.client.prepare<{ token: string }>('register', 'POST', data, undefined, {
           route: 'auth',
         });
         return operation;
       }
     })(this, '');
+  }
+
+  get reports() {
+    return new (class Reports extends BaseAction {
+      all() {
+        const { operation } = this.client.prepare<Report[]>(this.endpoint + '/', 'GET');
+        return operation;
+      }
+
+      one(id: string, secret?: string) {
+        const { operation } = this.client.prepare<Report>(this.endpoint + '/:id', 'GET', { secret }, { id });
+        return operation;
+      }
+
+      create(data: {
+        patientId: string;
+        doctorId: string;
+        reason: string;
+        tecnic: string;
+        study: string;
+        observations: string[];
+      }) {
+        const { operation } = this.client.prepare<Report>('/', 'POST', data);
+        return operation;
+      }
+
+      attachMedia(
+        id: string,
+        data: {
+          content: {
+            id: string;
+            type: 'image' | 'dicom';
+          }[];
+        }
+      ) {
+        const { operation } = this.client.prepare<{
+          message: string;
+        }>('/:id/media', 'POST', data, { id });
+        return operation;
+      }
+
+      publish(id: string) {
+        const { operation } = this.client.prepare<{
+          message: string;
+        }>(`/:id/publish`, 'POST', undefined, { id });
+        return operation;
+      }
+
+      getMedia(id: string, mediaId: 'collage' | string) {
+        const { operation } = this.client.prepare<Blob>(`/:id/media/:media.png`, 'GET', undefined, {
+          id,
+          media: mediaId,
+        });
+        return operation;
+      }
+
+      buildMediaURL(id: string, mediaId: 'collage' | string, forcePublic = false) {
+        return makeURL(
+          this.client.baseUrl,
+          forcePublic ? 'public' : this.client.route,
+          this.endpoint,
+          `/:id/media/:media.png`,
+          {
+            params: {
+              id,
+              media: mediaId,
+            },
+          }
+        );
+      }
+
+      createSecret(
+        id: string,
+        data: {
+          expiresAt?: string;
+        }
+      ) {
+        const { operation } = this.client.prepare<{
+          secret: string;
+        }>(`/:id/secret`, 'POST', data, { id });
+        return operation;
+      }
+    })(this, '/reports');
+  }
+
+  get files() {
+    return new (class Files extends BaseAction {
+      upload(file: Blob) {
+        const formData = new FormData();
+
+        formData.append('', file);
+
+        const { operation } = this.client.prepare<{
+          message: string;
+        }>('upload', 'POST', formData);
+        return operation;
+      }
+
+      one(id: string) {
+        const { operation } = this.client.prepare<Blob>('/:id', 'GET', undefined, { id });
+        return operation;
+      }
+
+      raw(id: string) {
+        const { operation } = this.client.prepare<Blob>('/:id/raw', 'GET', undefined, { id });
+        return operation;
+      }
+    })(this, 'files');
   }
 
   prepare<T>(
