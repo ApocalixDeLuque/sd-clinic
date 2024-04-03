@@ -6,9 +6,15 @@ import Navbar from '../components/Navbar';
 import { useState } from 'react';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
+import { useClient } from '@/api/context';
+import toast from 'react-hot-toast';
+import { useSession } from '@/api/session';
 
 export default function RegisterPage() {
   const router = useRouter();
+
+  const { client } = useClient();
+  const session = useSession();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -43,8 +49,8 @@ export default function RegisterPage() {
       message: 'Ingresa un correo electrónico válido',
       path: ['email'],
     }),
-    phone: z.string().refine((value) => /^[0-9]{10}$/.test(value), {
-      message: 'Ingresa un número válido de 10 dígitos',
+    phone: z.string().refine((value) => value.startsWith('+52') && value.length === 13, {
+      message: 'El número de teléfono debe comenzar con "+52" seguido de 10 dígitos',
       path: ['phone'],
     }),
     password: z.string().refine((value) => value.length >= 8, {
@@ -54,11 +60,24 @@ export default function RegisterPage() {
   });
 
   const handleButtonClick = () => {
+    console.log(phone.length);
     const result = schema.safeParse({ firstName, lastName, email, phone, password });
 
     if (result.success) {
-      console.log(result.data);
-      router.push('/perfil');
+      const f = async () => {
+        const r = await client.auth.register({ name: `${firstName} ${lastName}`, email, phone, password }).submit();
+        session.init(r.token);
+
+        router.push('/perfil');
+      };
+
+      void toast
+        .promise(f(), {
+          loading: 'Registrando...',
+          success: 'Registro exitoso',
+          error: 'Error al registrar',
+        })
+        .then();
     } else {
       // En lugar de imprimir el error, establece el estado del error
       setFirstNameError(result.error.errors.some((err) => err.path[0] === 'firstName'));

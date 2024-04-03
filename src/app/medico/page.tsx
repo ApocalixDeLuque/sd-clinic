@@ -15,7 +15,7 @@ export default function ProfilePage() {
       {/* Navbar */}
       <Navbar />
       {/* Main Section */}
-      <div className="flex flex-col w-full p-4 gap-4">
+      <div className="flex flex-col lg:flex-row w-full p-4 gap-4">
         {/* Profile Card */}
         <ProfileCard />
         {/* Mis ultrasonidos */}

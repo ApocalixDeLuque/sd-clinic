@@ -166,7 +166,10 @@ export class Client {
           `/:id/media/:media.png`,
           "GET",
           undefined,
-          { id, media: mediaId },
+          {
+            id,
+            media: mediaId,
+          },
         );
         return operation;
       }
@@ -198,7 +201,7 @@ export class Client {
       ) {
         const { operation } = this.client.prepare<{
           secret: string;
-        }>(this.endpoint + `/:id/secret`, "POST", data, { id });
+        }>(`/:id/secret`, "POST", data, { id });
         return operation;
       }
     })(this, "/reports");
@@ -271,7 +274,7 @@ export class Client {
         url = `${url}?${body}`;
       } else {
         const params = buildQueryString(body as Record<string, unknown>);
-        if (params.length > 0) url = `${url}?${params}`;
+        if (params.length > 0) url = `${url}?${params} `;
       }
     }
 
@@ -280,7 +283,7 @@ export class Client {
     if (!config?.removeAuth) {
       headers = {
         ...headers,
-        Authorization: `Bearer ${this.t}`,
+        Authorization: `Bearer ${this.t} `,
       };
     }
 
