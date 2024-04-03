@@ -48,9 +48,10 @@ const Navbar = () => {
           <div className="flex flex-col gap-4">
             <Button
               text="Inicio"
-              link="/"
+              link={isAuth ? '/perfil' : '/'}
               onClick={() => {
                 console.log('Inicio');
+                setIsSidebarOpen(false);
               }}
             />
             {isAuth ? (
