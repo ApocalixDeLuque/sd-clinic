@@ -16,6 +16,7 @@ export interface Report extends DoctorEntity {
   tecnic: string;
   study: string;
   images: string[];
+  videos: string[];
   published: boolean;
   createdAt: string;
 }

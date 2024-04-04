@@ -212,6 +212,28 @@ export class Client {
     })(this, "/reports");
   }
 
+  get patients() {
+    return new (class Patients extends BaseAction {
+      all() {
+        const { operation } = this.client.prepare<Report[]>(
+          this.endpoint,
+          "GET",
+        );
+        return operation;
+      }
+
+      one(id: string) {
+        const { operation } = this.client.prepare<Report>(
+          this.endpoint + "/:id",
+          "GET",
+          undefined,
+          { id },
+        );
+        return operation;
+      }
+    })(this, "/patients");
+  }
+
   get files() {
     return new (class Files extends BaseAction {
       upload(file: Blob) {

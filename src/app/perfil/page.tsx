@@ -8,7 +8,6 @@ import { useClient } from "@/api/context";
 
 export default function ProfilePage() {
   const { client } = useClient("user");
-  const session = useSession();
 
   useAuthenticated();
 
