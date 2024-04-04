@@ -26,3 +26,11 @@ export interface FileMetadata extends DoctorEntity {
   size: number;
   contentType: string;
 }
+
+export interface Patient extends DoctorEntity {
+  name: string;
+  phone: string;
+  email: string;
+  birthday: string;
+  gender: string;
+}

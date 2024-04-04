@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface InputProps {
   placeholder: string;
@@ -8,11 +8,20 @@ interface InputProps {
   error?: boolean;
   isClicked?: boolean; // Añade esta línea
   setIsClicked?: (clicked: boolean) => void; // Añade esta línea
-  type?: React.InputHTMLAttributes<HTMLInputElement>['type'];
+  type?: React.InputHTMLAttributes<HTMLInputElement>["type"];
+  disabled?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({ type, placeholder, onInputChange, error, isClicked, setIsClicked }) => {
-  const [inputValue, setInputValue] = useState('');
+const Input: React.FC<InputProps> = ({
+  disabled,
+  type,
+  placeholder,
+  onInputChange,
+  error,
+  isClicked,
+  setIsClicked,
+}) => {
+  const [inputValue, setInputValue] = useState("");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -23,7 +32,7 @@ const Input: React.FC<InputProps> = ({ type, placeholder, onInputChange, error, 
     if (setIsClicked) {
       setIsClicked(true);
     } else {
-      console.error('setIsClicked is undefined');
+      console.error("setIsClicked is undefined");
     }
   };
 
@@ -34,8 +43,9 @@ const Input: React.FC<InputProps> = ({ type, placeholder, onInputChange, error, 
       value={inputValue}
       onChange={handleChange}
       onClick={handleClick}
+      disabled={disabled}
       className={`w-full font-medium border-2 rounded-md p-2 ${
-        error && !isClicked ? 'border-red-500' : 'border-gray-400'
+        error && !isClicked ? "border-red-500" : "border-gray-400"
       } placeholder:text-gray-400`}
     />
   );

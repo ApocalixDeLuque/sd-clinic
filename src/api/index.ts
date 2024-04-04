@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, Method, RawAxiosRequestHeaders } from "axios";
 import { makeURL } from "@nauverse/make-url";
 import useSWR, { SWRConfiguration, SWRResponse } from "swr";
-import type { Report } from "./entities";
+import type { Patient, Report } from "./entities";
 
 interface Request {
   url: string;
@@ -134,7 +134,6 @@ export class Client {
 
       create(data: {
         patientId: string;
-        doctorId: string;
         reason: string;
         tecnic: string;
         study: string;
@@ -219,7 +218,7 @@ export class Client {
   get patients() {
     return new (class Patients extends BaseAction {
       all() {
-        const { operation } = this.client.prepare<Report[]>(
+        const { operation } = this.client.prepare<Patient[]>(
           this.endpoint,
           "GET",
         );
@@ -227,7 +226,7 @@ export class Client {
       }
 
       one(id: string) {
-        const { operation } = this.client.prepare<Report>(
+        const { operation } = this.client.prepare<Patient>(
           this.endpoint + "/:id",
           "GET",
           undefined,

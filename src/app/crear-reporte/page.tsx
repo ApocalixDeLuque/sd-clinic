@@ -6,8 +6,6 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import { useClient } from "@/api/context";
 import toast from "react-hot-toast";
-import { useSession } from "@/api/session";
-import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faImage,
@@ -35,6 +33,12 @@ const patientInfo = {
   gender: "Femenino",
   branch: "Guadalajara Centro",
 };
+
+function getAge(birthday: Date): number {
+  const ageDifMs = Date.now() - birthday.getTime();
+  const ageDate = new Date(ageDifMs);
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
 
 function FileInput({
   value,
@@ -141,22 +145,49 @@ const CrearReporte: React.FC<PatientCardProps> = ({
   gender = patientInfo.gender,
   branch = patientInfo.branch,
 }) => {
-  const { user } = useSession();
-  const session = useSession();
-  const router = useRouter();
   const { client } = useClient();
+
+  const { data: patients } = client.patients.useSwr((f) => f.all())();
 
   const [medicName, setMedicName] = useState();
   const [study, setStudy] = useState("");
   const [tecnic, setTecnic] = useState("");
   const [reason, setReason] = useState("");
   const [observations, setObservations] = useState([""]);
+  const [patientId, setPatientId] = useState("");
   const [files, setFiles] = useState<File[]>([]);
 
   const [saved, setSaved] = useState(false);
+  const [savedId, setSavedId] = useState<string>();
+
+  const { data: pPatient } = client.patients.useSwr(
+    (f) => f.one(patientId || ""),
+    Boolean(patientId),
+  )();
+
+  const handlePublish = async () => {
+    const f = async () => {
+      if (!savedId) throw new Error("No se ha guardado el reporte");
+
+      client.reports.publish(savedId).submit();
+    };
+
+    toast.promise(f(), {
+      loading: "Publicando...",
+      success: "Publicado",
+      error: "Error al publicar",
+    });
+  };
 
   const handleSave = async () => {
     const f = async () => {
+      const howManyImagesAre = files.filter((file) =>
+        file.type.startsWith("image"),
+      ).length;
+
+      if (howManyImagesAre < 4)
+        throw new Error("Se necesitan al menos 4 imágenes");
+
       const savedFiles = await Promise.all(
         files.map(async (file) => {
           return await client.files.upload(file).submit();
@@ -165,13 +196,15 @@ const CrearReporte: React.FC<PatientCardProps> = ({
 
       const r = await client.reports
         .create({
-          patientId: "660e027665a681ae8fff3ffa",
+          patientId,
           reason,
           tecnic,
           study,
           observations,
         })
         .submit();
+
+      setSavedId(r._id);
 
       await client.reports
         .attachMedia(r._id, {
@@ -193,7 +226,7 @@ const CrearReporte: React.FC<PatientCardProps> = ({
       .promise(f(), {
         loading: "Guardando...",
         success: "Guardado",
-        error: "Error al guardar",
+        error: (e) => e.message,
       })
       .then(() => {
         setSaved(true);
@@ -219,28 +252,33 @@ const CrearReporte: React.FC<PatientCardProps> = ({
       <div className="flex w-full items-center justify-between px-12 text-lg">
         <div>
           <div className="flex gap-2">
-            <div className="font-bold">Fecha:</div>
-            <div className="text-gray-600">{date}</div>
-          </div>
-          <div className="flex gap-2">
             <div className="font-bold">Paciente:</div>
-            <div className="text-gray-600">{patientName}</div>
+            <div className="text-gray-600">{pPatient?.name}</div>
           </div>
           <div className="flex gap-2">
             <div className="font-bold">Fecha de nacimiento:</div>
-            <div className="text-gray-600">{birthDate}</div>
+            <div className="text-gray-600">
+              {pPatient && (
+                <>
+                  {new Date(pPatient?.birthday).toLocaleString("es-MX", {
+                    year: "numeric",
+                    month: "long",
+                    day: "2-digit",
+                    timeZone: "UTC",
+                  })}
+                </>
+              )}
+            </div>
           </div>
           <div className="flex gap-2">
             <div className="font-bold">Edad:</div>
-            <div className="text-gray-600">{age} años</div>
+            <div className="text-gray-600">
+              {pPatient && <>{getAge(new Date(pPatient.birthday))} años</>}
+            </div>
           </div>
           <div className="flex gap-2">
             <div className="font-bold">Sexo:</div>
-            <div className="text-gray-600">{gender}</div>
-          </div>
-          <div className="flex gap-2">
-            <div className="font-bold">Sucursal:</div>
-            <div className="text-gray-600">{branch}</div>
+            <div className="text-gray-600">{pPatient?.gender}</div>
           </div>
         </div>
         <img
@@ -250,9 +288,41 @@ const CrearReporte: React.FC<PatientCardProps> = ({
         />
       </div>
       <div className="flex flex-col w-full px-12 gap-2">
-        <Input placeholder="Tecnica" onInputChange={setTecnic} />
-        <Input placeholder="Motivo del estudio" onInputChange={setReason} />
-        <Input placeholder="Estudio" onInputChange={setStudy} />
+        <select
+          className={`w-full font-medium border-2 rounded-md p-2  border-gray-400`}
+          onChange={(e) => setPatientId(e.target.value)}
+          value={patientId}
+          disabled={saved}
+        >
+          <option disabled value="" selected={patientId === undefined}>
+            Selecciona un paciente
+          </option>
+
+          {patients?.map((patient) => (
+            <option
+              key={patient._id}
+              value={patient._id}
+              selected={patientId === patient._id}
+            >
+              {patient.name}
+            </option>
+          ))}
+        </select>
+        <Input
+          placeholder="Tecnica"
+          onInputChange={setTecnic}
+          disabled={saved}
+        />
+        <Input
+          placeholder="Motivo del estudio"
+          onInputChange={setReason}
+          disabled={saved}
+        />
+        <Input
+          placeholder="Estudio"
+          onInputChange={setStudy}
+          disabled={saved}
+        />
         <div className="flex flex-col w-full items-center gap-1">
           {observations.map((observation, index) => (
             <div key={index} className="flex w-full items-center gap-1">
@@ -286,14 +356,15 @@ const CrearReporte: React.FC<PatientCardProps> = ({
         {/* <Input placeholder="Observaciones" onInputChange={setObservations} /> */}
 
         <div className="w-full font-medium rounded-md p-2 border-gray-400 placeholder:text-gray-400 grid grid-cols-3 gap-5">
-          {files.map((file) => (
+          {files.map((file, index) => (
             <FileInput
               value={file}
               key={file.name}
               disableClick
               onDelete={() => {
                 setFiles((prev) => {
-                  return prev.filter((f) => f !== file);
+                  // delete by index
+                  return prev.slice(0, index).concat(prev.slice(index + 1));
                 });
               }}
             />
@@ -305,10 +376,10 @@ const CrearReporte: React.FC<PatientCardProps> = ({
           />
         </div>
 
-        {saved ? (
+        {!saved ? (
           <Button text="Guardar" onClick={handleSave} selected />
         ) : (
-          <Button text="Publicar" selected />
+          <Button text="Publicar" selected onClick={handlePublish} />
         )}
       </div>
     </ProfileLayout>
