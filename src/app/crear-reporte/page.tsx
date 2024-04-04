@@ -6,12 +6,9 @@ import Input from '../components/Input';
 import Button from '../components/Button';
 import { useClient } from '@/api/context';
 import toast from 'react-hot-toast';
-import { useSession } from '@/api/session';
-import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImage, faMinus, faPlus, faTimesCircle, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
 import cn from 'classnames';
-
 interface PatientCardProps {
   date: string;
   patientName: string;
@@ -134,7 +131,6 @@ const CrearReporte: React.FC<PatientCardProps> = ({
 }) => {
   const { client } = useClient();
 
-  const [medicName, setMedicName] = useState();
   const [study, setStudy] = useState('');
   const [tecnic, setTecnic] = useState('');
   const [reason, setReason] = useState('');
