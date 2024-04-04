@@ -1,7 +1,7 @@
-import axios, { AxiosInstance, Method, RawAxiosRequestHeaders } from 'axios';
-import { makeURL } from '@nauverse/make-url';
-import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import type { Report } from './entities';
+import axios, { AxiosInstance, Method, RawAxiosRequestHeaders } from "axios";
+import { makeURL } from "@nauverse/make-url";
+import useSWR, { SWRConfiguration, SWRResponse } from "swr";
+import type { Patient, Report } from "./entities";
 
 interface Request {
   url: string;
@@ -92,8 +92,18 @@ export class Client {
         return operation;
       }
 
-      create(data: { patientId: string; reason: string; tecnic: string; study: string; observations: string[] }) {
-        const { operation } = this.client.prepare<Report>(this.endpoint + '/', 'POST', data);
+      create(data: {
+        patientId: string;
+        reason: string;
+        tecnic: string;
+        study: string;
+        observations: string[];
+      }) {
+        const { operation } = this.client.prepare<Report>(
+          this.endpoint + "/",
+          "POST",
+          data,
+        );
         return operation;
       }
 
@@ -159,12 +169,20 @@ export class Client {
   get patients() {
     return new (class Patients extends BaseAction {
       all() {
-        const { operation } = this.client.prepare<Report[]>(this.endpoint, 'GET');
+        const { operation } = this.client.prepare<Patient[]>(
+          this.endpoint,
+          "GET",
+        );
         return operation;
       }
 
       one(id: string) {
-        const { operation } = this.client.prepare<Report>(this.endpoint + '/:id', 'GET', undefined, { id });
+        const { operation } = this.client.prepare<Patient>(
+          this.endpoint + "/:id",
+          "GET",
+          undefined,
+          { id },
+        );
         return operation;
       }
     })(this, '/patients');

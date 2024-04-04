@@ -9,9 +9,18 @@ interface InputProps {
   isClicked?: boolean; // Añade esta línea
   setIsClicked?: (clicked: boolean) => void; // Añade esta línea
   type?: React.InputHTMLAttributes<HTMLInputElement>['type'];
+  disabled?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({ type, placeholder, onInputChange, error, isClicked, setIsClicked }) => {
+const Input: React.FC<InputProps> = ({
+  disabled,
+  type,
+  placeholder,
+  onInputChange,
+  error,
+  isClicked,
+  setIsClicked,
+}) => {
   const [inputValue, setInputValue] = useState('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +43,7 @@ const Input: React.FC<InputProps> = ({ type, placeholder, onInputChange, error, 
       value={inputValue}
       onChange={handleChange}
       onClick={handleClick}
+      disabled={disabled}
       className={`w-full font-medium border-2 rounded-md p-2 lg:p-4 ${
         error && !isClicked ? 'border-red-500' : 'border-gray-400'
       } placeholder:text-gray-400 lg:text-xl`}
