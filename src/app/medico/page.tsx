@@ -1,9 +1,9 @@
-'use client';
-import UltrasoundCard from '../components/UltrasoundCard';
-import Navbar from '../components/Navbar';
-import ProfileCard from '../components/ProfileCard';
-import { useSession } from '@/api/session';
-import { useAuthenticated } from '../hooks/useAuthenticated';
+"use client";
+import UltrasoundCard from "../components/UltrasoundCard";
+import Navbar from "../components/Navbar";
+import ProfileCard from "../components/ProfileCard";
+import { useSession } from "@/api/session";
+import { useAuthenticated } from "../hooks/useAuthenticated";
 
 export default function ProfilePage() {
   const session = useSession();
@@ -24,20 +24,7 @@ export default function ProfilePage() {
           <UltrasoundCard
             id="bebe1ultrasonido"
             date="12 de Enero de 2024"
-            comments="Desarrollo normal, sin anomalías detectadas.Desarrollo normal, sin anomalías detectadas."
-            gestation="20 semanas y 3 día"
-            weight="350 gramos"
-            health="Excelente"
-            nextAppointment="22 de Marzo del 2024 a las 10:00 AM"
-          />
-          <UltrasoundCard
-            id="bebe2ultrasonido"
-            date="2 de Abril del 2024"
-            comments="Gemelos creciendo saludablemente y con buen peso."
-            gestation="24 semanas y 1 día"
-            weight="Bebé 1: 600 gramos, Bebé 2: 550 gramos"
-            health="Muy buena, ambos bebés con movimientos activos."
-            nextAppointment="9 de Abril del 2024 a las 11:30 AM"
+            comments={[]}
           />
         </div>
 

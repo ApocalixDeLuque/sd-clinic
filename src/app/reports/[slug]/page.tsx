@@ -2,9 +2,9 @@
 import { useClient } from "@/api/context";
 import Navbar from "@/app/components/Navbar";
 import { useSearchParams } from "next/navigation";
+// @ts-expect-error
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
-import { type } from "os";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
@@ -146,9 +146,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                 <ul className="list-disc pl-5">
                   {data?.observations.map((it) => (
                     <li key={it}>
-                      <span className="font-bold">
-                        {it.split(" ")[0]}
-                      </span>{" "}
+                      <span className="font-bold">{it.split(" ")[0]}</span>{" "}
                       {it.split(" ").slice(1).join(" ")}
                     </li>
                   ))}

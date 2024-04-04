@@ -92,7 +92,12 @@ export class Client {
         return operation;
       }
 
-      register(data: { id: string; password: string }) {
+      register(data: {
+        name: string;
+        phone: string;
+        email: string;
+        password: string;
+      }) {
         const { operation } = this.client.prepare<{ token: string }>(
           "register",
           "POST",
@@ -201,7 +206,7 @@ export class Client {
       ) {
         const { operation } = this.client.prepare<{
           secret: string;
-        }>(`/:id/secret`, "POST", data, { id });
+        }>(this.endpoint + `/:id/secret`, "POST", data, { id });
         return operation;
       }
     })(this, "/reports");
