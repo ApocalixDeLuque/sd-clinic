@@ -179,7 +179,7 @@ export class Client {
 
   get files() {
     return new (class Files extends BaseAction {
-      upload(file: Blob | Buffer) {
+      upload(file: Blob) {
         const formData = new FormData();
 
         formData.append('', file);
