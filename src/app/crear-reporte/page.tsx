@@ -6,11 +6,8 @@ import Input from '../components/Input';
 import Button from '../components/Button';
 import { useClient } from '@/api/context';
 import toast from 'react-hot-toast';
-import { useSession } from '@/api/session';
-import { z } from 'zod';
-import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCross, faMinus, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 interface PatientCardProps {
   date: string;
@@ -38,12 +35,8 @@ const CrearReporte: React.FC<PatientCardProps> = ({
   gender = patientInfo.gender,
   branch = patientInfo.branch,
 }) => {
-  const { user } = useSession();
-  const session = useSession();
-  const router = useRouter();
   const { client } = useClient();
 
-  const [medicName, setMedicName] = useState();
   const [study, setStudy] = useState('');
   const [tecnic, setTecnic] = useState('');
   const [reason, setReason] = useState('');
@@ -71,6 +64,13 @@ const CrearReporte: React.FC<PatientCardProps> = ({
         error: 'Error al guardar',
       })
       .then();
+  };
+
+  const handlePrint = () => {
+    toast.success('Imprimiendo...');
+    setTimeout(() => {
+      handleSave();
+    }, 3000);
   };
 
   const addObservation = () => {
@@ -119,7 +119,6 @@ const CrearReporte: React.FC<PatientCardProps> = ({
         <img src="/images/women.png" className=" aspect-square w-[200px] h-[200px]" alt="logo" />
       </div>
       <div className="flex flex-col w-full px-12 gap-2">
-        <Input placeholder="Medico solicitante" onInputChange={setMedicName} />
         <Input placeholder="Tecnica" onInputChange={setTecnic} />
         <Input placeholder="Motivo del estudio" onInputChange={setReason} />
         <Input placeholder="Estudio" onInputChange={setStudy} />
@@ -150,9 +149,9 @@ const CrearReporte: React.FC<PatientCardProps> = ({
             </div>
           ))}
         </div>
-        {/* <Input placeholder="Observaciones" onInputChange={setObservations} /> */}
 
         <div className="w-full h-64 font-medium border-2 rounded-md p-2 border-gray-400 placeholder:text-gray-400"></div>
+        <Button text="Imprimir" onClick={handlePrint} selected />
         <Button text="Guardar" onClick={handleSave} selected />
       </div>
     </ProfileLayout>

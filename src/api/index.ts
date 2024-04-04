@@ -92,14 +92,7 @@ export class Client {
         return operation;
       }
 
-      create(data: {
-        patientId: string;
-        doctorId: string;
-        reason: string;
-        tecnic: string;
-        study: string;
-        observations: string[];
-      }) {
+      create(data: { patientId: string; reason: string; tecnic: string; study: string; observations: string[] }) {
         const { operation } = this.client.prepare<Report>(this.endpoint + '/', 'POST', data);
         return operation;
       }

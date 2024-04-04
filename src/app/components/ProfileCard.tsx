@@ -30,6 +30,7 @@ const ProfileCard = () => {
               })}
             </p>
           </div>
+          {user?.isAdmin && 'Administrador'}
         </div>
         {/* <FontAwesomeIcon
           icon={faGear}

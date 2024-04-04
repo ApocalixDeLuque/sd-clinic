@@ -3,14 +3,18 @@ export interface DoctorEntity {
 }
 
 export interface Report extends DoctorEntity {
-  patientId: string | {
-    _id: string;
-    name: string;
-  };
-  doctorId: string | {
-    _id: string;
-    name: string;
-  };
+  patientId:
+    | string
+    | {
+        _id: string;
+        name: string;
+      };
+  doctorId:
+    | string
+    | {
+        _id: string;
+        name: string;
+      };
   reason: string;
   observations: string[];
   tecnic: string;
