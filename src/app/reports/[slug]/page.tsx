@@ -85,8 +85,8 @@ function DetailsSquare({
         </div>
       </div>
       <div className="flex flex-col">
-        <div className="font-bold text-xl">{title}</div>
-        <div>{name}</div>
+        <div className="font-bold text-xl lg:text-2xl">{title}</div>
+        <div className="lg:text-xl">{name}</div>
       </div>
     </div>
   );
@@ -157,7 +157,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
   return (
-    <main className="flex min-h-screen flex-col bg-white text-black">
+    <main className="flex min-h-screen lg:items-center flex-col bg-white text-black">
       {openShare && (
         <div
           ref={refs.setFloating}
@@ -166,7 +166,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           className="flex flex-col gap-2 bg-white p-3 rounded-lg border border-black/20 shadow-black/30 shadow text-lg z-50"
         >
           <FloatingArrow ref={arrowRef} context={context} fill="white" strokeWidth={2} stroke="gray" />
-          <div className="text-xs text-gray-800 text-center">
+          <div className="text-xs text-gray-800 text-center lg:text-xl">
             Cuanto tiempo quieres
             <br />
             compartir este ultrasonido?
@@ -176,13 +176,13 @@ export default function Page({ params }: { params: { slug: string } }) {
           {ShareTimes.map((it) => (
             <button
               type="button"
-              className="bg-verde-salud text-white px-4 py-1 pl-5 rounded relative"
+              className="bg-verde-salud text-white px-4 py-1 lg:py-2 pl-5 rounded relative lg:text-xl"
               key={it.seconds}
               onClick={() => {
                 handleShare(it.seconds);
               }}
             >
-              <div className="w-2 h-full bg-blue-400 absolute top-0 left-0 rounded-l" />
+              <div className="w-2 h-full bg-blue-400 absolute top-0 left-0 rounded-l lg:text-xl" />
               {it.label}
             </button>
           ))}
@@ -192,17 +192,17 @@ export default function Page({ params }: { params: { slug: string } }) {
       <Navbar />
       {/* Main Section */}
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 lg:max-w-[1500px]">
         <div className="pt-5 px-5">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold">Mi Ultrasonido </h2>
+            <h2 className="text-2xl font-bold lg:text-4xl">Mi Ultrasonido </h2>
             {!hasSecret && (
-              <button className="text-xl" ref={refs.setReference} {...getReferenceProps()}>
+              <button className="text-xl lg:text-4xl" ref={refs.setReference} {...getReferenceProps()}>
                 <FontAwesomeIcon icon={faShareSquare} />
               </button>
             )}
           </div>
-          <div>
+          <div className="lg:text-2xl">
             {data
               ? new Date(data?.createdAt).toLocaleString('es-MX', {
                   year: 'numeric',
@@ -246,7 +246,7 @@ export default function Page({ params }: { params: { slug: string } }) {
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold pl-5">Resumen</h2>
+          <h2 className="text-2xl font-bold pl-5 lg:text-4xl">Resumen</h2>
         </div>
         <div className="px-5 flex flex-col gap-2">
           <DetailsSquare icon={faPerson} title="Paciente" name={extractValueFromComposed(data?.patientId)} />
