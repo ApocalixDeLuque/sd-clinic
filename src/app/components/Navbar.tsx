@@ -18,9 +18,12 @@ const Navbar = () => {
   };
 
   return (
-    <div onClick={handleClickOutside} className="flex w-full items-center justify-between border-b p-4">
+    <div
+      onClick={handleClickOutside}
+      className="flex w-full items-center justify-between border-b p-4 lg:max-w-[1500px]"
+    >
       <Link href={'/'} className="aspect-[120/25]">
-        <img src="/images/logo.png" alt="logo" />
+        <img src="/images/logo.png" className="lg:h-12" alt="logo" />
       </Link>
       <button
         disabled={isSidebarOpen}
@@ -29,23 +32,26 @@ const Navbar = () => {
           setIsSidebarOpen(!isSidebarOpen);
         }}
       >
-        <FontAwesomeIcon icon={faBars} className="aspect-square w-8" />
+        <FontAwesomeIcon icon={faBars} className="aspect-square w-8 lg:h-12" />
       </button>
 
       {isSidebarOpen && (
-        <div ref={sidebarRef} className="flex flex-col w-full fixed top-0 bottom-0 right-0 z-50 bg-white p-4 gap-8">
-          <div className="flex w-full items-center justify-between">
+        <div
+          ref={sidebarRef}
+          className="flex flex-col items-center w-full fixed top-0 bottom-0 right-0 z-50 bg-white gap-8"
+        >
+          <div className="flex w-full items-center justify-between self-center p-4 lg:max-w-[1500px]">
             <Link onClick={() => setIsSidebarOpen(false)} href={'/'} className="aspect-[120/25]">
-              <img src="/images/logo.png" alt="logo" />
+              <img src="/images/logo.png" className="lg:h-12" alt="logo" />
             </Link>
-            <button onClick={() => setIsSidebarOpen(false)} className="w-8 self-end">
-              <FontAwesomeIcon icon={faTimes} />
+            <button onClick={() => setIsSidebarOpen(false)} className="self-end">
+              <FontAwesomeIcon className="aspect-square lg:h-12" icon={faTimes} />
             </button>
             {/* Resto del contenido de la barra lateral */}
           </div>
           <p className="text-lg font-bold self-center">Menu de Navegación</p>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col w-full gap-4 lg:max-w-[800px]">
             <Button
               text="Inicio"
               link={isAuth ? '/perfil' : '/'}

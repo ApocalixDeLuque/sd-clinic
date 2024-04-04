@@ -6,8 +6,8 @@ interface InputProps {
   placeholder: string;
   onInputChange: (input: string) => void;
   error?: boolean;
-  isClicked: boolean; // Añade esta línea
-  setIsClicked: (clicked: boolean) => void; // Añade esta línea
+  isClicked?: boolean; // Añade esta línea
+  setIsClicked?: (clicked: boolean) => void; // Añade esta línea
   type?: React.InputHTMLAttributes<HTMLInputElement>['type'];
 }
 
@@ -20,7 +20,11 @@ const Input: React.FC<InputProps> = ({ type, placeholder, onInputChange, error, 
   };
 
   const handleClick = () => {
-    setIsClicked(true);
+    if (setIsClicked) {
+      setIsClicked(true);
+    } else {
+      console.error('setIsClicked is undefined');
+    }
   };
 
   return (
