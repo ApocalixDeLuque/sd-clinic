@@ -51,7 +51,7 @@ const Navbar = () => {
           </div>
           <p className="text-lg font-bold self-center">Menu de Navegación</p>
 
-          <div className="flex flex-col w-full gap-4 lg:max-w-[800px]">
+          <div className="flex flex-col w-full gap-4 px-4 lg:max-w-[800px]">
             <Button
               text="Inicio"
               link={isAuth ? '/perfil' : '/'}

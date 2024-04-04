@@ -107,7 +107,7 @@ const UltrasoundCard: React.FC<UltrasoundCardProps> = ({ id, date, comments }) =
   };
 
   return (
-    <div className="flex flex-col w-full items-center gap-4">
+    <div className="flex flex-col w-full items-center gap-4 lg:px-20">
       {openShare && (
         <div
           ref={refs.setFloating}
@@ -116,7 +116,7 @@ const UltrasoundCard: React.FC<UltrasoundCardProps> = ({ id, date, comments }) =
           className="flex flex-col gap-2 bg-white p-3 rounded-lg border border-black/20 shadow-black/30 shadow text-lg"
         >
           <FloatingArrow ref={arrowRef} context={context} fill="white" strokeWidth={2} stroke="gray" />
-          <div className="text-xs text-gray-800 text-center">
+          <div className="text-xs text-gray-800 text-center lg:text-xl">
             Cuanto tiempo quieres
             <br />
             compartir este ultrasonido?
@@ -126,7 +126,7 @@ const UltrasoundCard: React.FC<UltrasoundCardProps> = ({ id, date, comments }) =
           {ShareTimes.map((it) => (
             <button
               type="button"
-              className="bg-verde-salud text-white px-4 py-1 pl-5 rounded relative"
+              className="bg-verde-salud text-white px-4 py-1 lg:py-2 pl-5 rounded relative lg:text-xl"
               key={it.seconds}
               onClick={() => {
                 handleShare(it.seconds);
@@ -139,14 +139,14 @@ const UltrasoundCard: React.FC<UltrasoundCardProps> = ({ id, date, comments }) =
         </div>
       )}
 
-      <p className="font-bold text-sm self-start">{date}</p>
+      <p className="font-bold self-start lg:text-xl">{date}</p>
       <img src={client.reports.buildMediaURL(id, 'collage', true)} alt="Ultrasonidos" className="rounded-lg" />
       <div className="flex flex-col w-full gap-2">
         <div className="flex w-full gap-2 px-1">
           <img src="/icons/comment.svg" className="aspect-square w-6 self-start my-2" />
-          <div className="text-sm">
+          <div className="flex flex-col gap-2 lg:text-xl">
             <p className="font-bold">Comentarios del médico:</p>
-            <ul className="list-disc pl-5">
+            <ul className="list-disc pl-5 ">
               {Array.isArray(comments)
                 ? comments.map((it) => {
                     return <li key={it}>{it}</li>;
@@ -165,7 +165,7 @@ const UltrasoundCard: React.FC<UltrasoundCardProps> = ({ id, date, comments }) =
           className="
 w-full text-center font-medium
 bg-blue-400 border-blue-400 text-white
- border-2 rounded-lg py-1
+ border-2 rounded-lg py-1 lg:py-2 lg:text-xl
           "
         >
           Compartir

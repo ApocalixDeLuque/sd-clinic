@@ -25,7 +25,7 @@ export default function ProfilePage() {
             hour: '2-digit',
             minute: '2-digit',
           })}
-          comments={report.observations ?? []}
+          comments={report.observations ? report.observations.slice(0, 3) : []}
         />
       ))}
     </ProfileLayout>

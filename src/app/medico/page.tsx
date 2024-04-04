@@ -14,9 +14,9 @@ export default function ProfilePage() {
 
   return (
     <ProfileLayout title="Mis Pacientes">
-      <div className="grid grid-cols-3 gap-4 w-full">
+      <div className="lg:grid lg:grid-cols-3 gap-4 w-full">
         {data?.map((patient) => (
-          <div key={patient._id} className="flex flex-col items-center w-full text-lg gap-4">
+          <div key={patient._id} className="flex flex-col items-center w-full text-lg gap-4 border rounded-lg p-4">
             <img src="/images/women.png" className="w-[100px]" alt="logo" />
             <div className="flex flex-col items-center">
               <p className="font-bold">Nombre:</p>

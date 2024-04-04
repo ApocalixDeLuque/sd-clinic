@@ -7,8 +7,9 @@ import Button from '../components/Button';
 import { useClient } from '@/api/context';
 import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImage, faMinus, faPlus, faTimesCircle, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faImage, faMinus, faPlus, faTimesCircle, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
 import cn from 'classnames';
+import Link from 'next/link';
 interface PatientCardProps {
   date: string;
   patientName: string;
@@ -58,7 +59,7 @@ function FileInput({
 
   return (
     <div
-      className={cn('relative border min-h-[200px] hover:border-gray-400 transition w-[300px] rounded-xl', {
+      className={cn('w-full relative border min-h-[200px] hover:border-gray-400 transition lg:w-[300px] rounded-xl', {
         'border-dashed': !value,
         'border-verde-salud bg-verde-salud/10': !!value,
       })}
@@ -112,7 +113,7 @@ function FileInput({
           </div>
         ) : (
           <>
-            <FontAwesomeIcon icon={faImage} className="text-5xl" />
+            <FontAwesomeIcon icon={faImage} className="text-5xl p-10" />
             <div className="text-sm">Agregar un archivo</div>
           </>
         )}
@@ -200,36 +201,40 @@ const CrearReporte: React.FC<PatientCardProps> = ({
 
   return (
     <ProfileLayout title="Expediente">
-      <div className="flex w-full items-center justify-between px-12 text-lg">
-        <div>
-          <div className="flex gap-2">
+      <Link href={'/medico'} className="flex items-center self-start gap-2 text-verde-salud font-bold">
+        <FontAwesomeIcon icon={faArrowLeft} />
+        <p>Regresa a la lista de pacientes</p>
+      </Link>
+      <div className="flex flex-col-reverse lg:flex-row w-full items-center justify-between lg:px-12 text-lg">
+        <div className="flex flex-col w-full gap-2 lg:gap-0">
+          <div className="flex flex-col lg:flex-row lg:gap-2">
             <div className="font-bold">Fecha:</div>
             <div className="text-gray-600">{date}</div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col lg:flex-row lg:gap-2">
             <div className="font-bold">Paciente:</div>
             <div className="text-gray-600">{patientName}</div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col lg:flex-row lg:gap-2">
             <div className="font-bold">Fecha de nacimiento:</div>
             <div className="text-gray-600">{birthDate}</div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col lg:flex-row lg:gap-2">
             <div className="font-bold">Edad:</div>
             <div className="text-gray-600">{age} años</div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col lg:flex-row lg:gap-2">
             <div className="font-bold">Sexo:</div>
             <div className="text-gray-600">{gender}</div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col lg:flex-row lg:gap-2">
             <div className="font-bold">Sucursal:</div>
             <div className="text-gray-600">{branch}</div>
           </div>
         </div>
-        <img src="/images/women.png" className=" aspect-square w-[200px] h-[200px]" alt="logo" />
+        <img src="/images/women.png" className=" aspect-square w-40 h-40 lg:w-[200px] lg:h-[200px]" alt="logo" />
       </div>
-      <div className="flex flex-col w-full px-12 gap-2">
+      <div className="flex flex-col w-full lg:px-12 gap-2">
         <Input placeholder="Tecnica" onInputChange={setTecnic} />
         <Input placeholder="Motivo del estudio" onInputChange={setReason} />
         <Input placeholder="Estudio" onInputChange={setStudy} />
@@ -261,7 +266,7 @@ const CrearReporte: React.FC<PatientCardProps> = ({
           ))}
         </div>
 
-        <div className="w-full font-medium rounded-md p-2 border-gray-400 placeholder:text-gray-400 grid grid-cols-3 gap-5">
+        <div className="flex flex-col w-full font-medium rounded-md lg:p-2 border-gray-400 placeholder:text-gray-400 lg:grid lg:grid-cols-3 gap-4">
           {files.map((file) => (
             <FileInput
               value={file}

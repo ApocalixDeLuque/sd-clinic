@@ -1,11 +1,11 @@
-"use client";
-import { useClient } from "@/api/context";
-import Navbar from "@/app/components/Navbar";
-import { useSearchParams } from "next/navigation";
+'use client';
+import { useClient } from '@/api/context';
+import Navbar from '@/app/components/Navbar';
+import { useSearchParams } from 'next/navigation';
 // @ts-expect-error
-import { Splide, SplideSlide } from "@splidejs/react-splide";
-import "@splidejs/react-splide/css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Splide, SplideSlide } from '@splidejs/react-splide';
+import '@splidejs/react-splide/css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import {
   IconDefinition,
@@ -14,8 +14,8 @@ import {
   faPerson,
   faShareSquare,
   faUserDoctor,
-} from "@fortawesome/free-solid-svg-icons";
-import { useRef, useState } from "react";
+} from '@fortawesome/free-solid-svg-icons';
+import { useRef, useState } from 'react';
 import {
   FloatingArrow,
   arrow,
@@ -26,24 +26,24 @@ import {
   useDismiss,
   useFloating,
   useInteractions,
-} from "@floating-ui/react";
-import toast from "react-hot-toast";
+} from '@floating-ui/react';
+import toast from 'react-hot-toast';
 
 const ShareTimes = [
   {
-    label: "Una Hora",
+    label: 'Una Hora',
     seconds: 3600,
   },
   {
-    label: "Un Día",
+    label: 'Un Día',
     seconds: 86400,
   },
   {
-    label: "Una Semana",
+    label: 'Una Semana',
     seconds: 604800,
   },
   {
-    label: "Una Mes",
+    label: 'Una Mes',
     seconds: 2592000,
   },
 ];
@@ -55,13 +55,13 @@ function extractValueFromComposed(
         _id: string;
         name: string;
       }
-    | undefined,
+    | undefined
 ): string {
   if (!u) {
-    return "Cargando...";
+    return 'Cargando...';
   }
 
-  if (typeof u === "string") {
+  if (typeof u === 'string') {
     return u;
   }
 
@@ -95,12 +95,10 @@ function DetailsSquare({
 export default function Page({ params }: { params: { slug: string } }) {
   const query = useSearchParams();
 
-  const hasSecret = query.has("secret");
-  const { client } = useClient(hasSecret ? "public" : "user");
+  const hasSecret = query.has('secret');
+  const { client } = useClient(hasSecret ? 'public' : 'user');
 
-  const { data } = client.reports.useSwr((f) =>
-    f.one(params.slug, query.get("secret") ?? undefined),
-  )();
+  const { data } = client.reports.useSwr((f) => f.one(params.slug, query.get('secret') ?? undefined))();
 
   const [openShare, setOpenShare] = useState(false);
 
@@ -116,8 +114,8 @@ export default function Page({ params }: { params: { slug: string } }) {
         element: arrowRef,
       }),
     ],
-    placement: "top",
-    strategy: "absolute",
+    placement: 'top',
+    strategy: 'absolute',
   });
 
   const click = useClick(context);
@@ -142,24 +140,21 @@ export default function Page({ params }: { params: { slug: string } }) {
       try {
         await window.navigator.share({
           url,
-          title: "Ultrasonido",
+          title: 'Ultrasonido',
         });
       } catch (err) {}
     };
 
     void toast
       .promise(f(), {
-        loading: "Generando link de ultrasonido...",
-        success: "Link copiado al portapapeles!",
-        error: "Error al generar link de ultrasonido",
+        loading: 'Generando link de ultrasonido...',
+        success: 'Link copiado al portapapeles!',
+        error: 'Error al generar link de ultrasonido',
       })
       .then();
   };
 
-  const { getReferenceProps, getFloatingProps } = useInteractions([
-    click,
-    dismiss,
-  ]);
+  const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
   return (
     <main className="flex min-h-screen flex-col bg-white text-black">
@@ -170,13 +165,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           {...getFloatingProps()}
           className="flex flex-col gap-2 bg-white p-3 rounded-lg border border-black/20 shadow-black/30 shadow text-lg z-50"
         >
-          <FloatingArrow
-            ref={arrowRef}
-            context={context}
-            fill="white"
-            strokeWidth={2}
-            stroke="gray"
-          />
+          <FloatingArrow ref={arrowRef} context={context} fill="white" strokeWidth={2} stroke="gray" />
           <div className="text-xs text-gray-800 text-center">
             Cuanto tiempo quieres
             <br />
@@ -207,26 +196,20 @@ export default function Page({ params }: { params: { slug: string } }) {
         <div className="pt-5 px-5">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold">Mi Ultrasonido </h2>
-            {
-              !hasSecret && (
-                <button
-                  className="text-xl"
-                  ref={refs.setReference}
-                  {...getReferenceProps()}
-                >
-                  <FontAwesomeIcon icon={faShareSquare} />
-                </button>
-              )
-            }
+            {!hasSecret && (
+              <button className="text-xl" ref={refs.setReference} {...getReferenceProps()}>
+                <FontAwesomeIcon icon={faShareSquare} />
+              </button>
+            )}
           </div>
           <div>
             {data
-              ? new Date(data?.createdAt).toLocaleString("es-MX", {
-                  year: "numeric",
-                  month: "short",
-                  day: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
+              ? new Date(data?.createdAt).toLocaleString('es-MX', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
                 })
               : undefined}
           </div>
@@ -266,35 +249,15 @@ export default function Page({ params }: { params: { slug: string } }) {
           <h2 className="text-2xl font-bold pl-5">Resumen</h2>
         </div>
         <div className="px-5 flex flex-col gap-2">
-          <DetailsSquare
-            icon={faPerson}
-            title="Paciente"
-            name={extractValueFromComposed(data?.patientId)}
-          />
+          <DetailsSquare icon={faPerson} title="Paciente" name={extractValueFromComposed(data?.patientId)} />
 
-          <DetailsSquare
-            icon={faUserDoctor}
-            title="Doctor"
-            name={`${extractValueFromComposed(data?.doctorId)}`}
-          />
+          <DetailsSquare icon={faUserDoctor} title="Doctor" name={`${extractValueFromComposed(data?.doctorId)}`} />
 
-          <DetailsSquare
-            icon={faPenFancy}
-            title="Nombre del Estudio"
-            name={data?.study}
-          />
+          <DetailsSquare icon={faPenFancy} title="Nombre del Estudio" name={data?.study} />
 
-          <DetailsSquare
-            icon={faPenFancy}
-            title="Técnica"
-            name={data?.tecnic}
-          />
+          <DetailsSquare icon={faPenFancy} title="Técnica" name={data?.tecnic} />
 
-          <DetailsSquare
-            icon={faPenFancy}
-            title="Motivo del estudio"
-            name={data?.reason}
-          />
+          <DetailsSquare icon={faPenFancy} title="Motivo del estudio" name={data?.reason} />
 
           <DetailsSquare
             icon={faMagnifyingGlass}
@@ -304,8 +267,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                 <ul className="list-disc pl-5">
                   {data?.observations.map((it) => (
                     <li key={it}>
-                      <span className="font-bold">{it.split(" ")[0]}</span>{" "}
-                      {it.split(" ").slice(1).join(" ")}
+                      <span className="font-bold">{it.split(' ')[0]}</span> {it.split(' ').slice(1).join(' ')}
                     </li>
                   ))}
                 </ul>

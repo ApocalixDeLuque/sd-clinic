@@ -34,9 +34,9 @@ const Input: React.FC<InputProps> = ({ type, placeholder, onInputChange, error, 
       value={inputValue}
       onChange={handleChange}
       onClick={handleClick}
-      className={`w-full font-medium border-2 rounded-md p-2 ${
+      className={`w-full font-medium border-2 rounded-md p-2 lg:p-4 ${
         error && !isClicked ? 'border-red-500' : 'border-gray-400'
-      } placeholder:text-gray-400`}
+      } placeholder:text-gray-400 lg:text-xl`}
     />
   );
 };
