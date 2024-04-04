@@ -1,22 +1,15 @@
-"use client";
-import React, { ChangeEvent, useRef, useState } from "react";
+'use client';
+import React, { ChangeEvent, useRef, useState } from 'react';
 
-import ProfileLayout from "@/app/components/ProfileLayout";
-import Input from "../components/Input";
-import Button from "../components/Button";
-import { useClient } from "@/api/context";
-import toast from "react-hot-toast";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faImage,
-  faMinus,
-  faPlus,
-  faTimesCircle,
-  faUserDoctor,
-} from "@fortawesome/free-solid-svg-icons";
-import cn from "classnames";
-import Link from "next/link";
+import ProfileLayout from '@/app/components/ProfileLayout';
+import Input from '../components/Input';
+import Button from '../components/Button';
+import { useClient } from '@/api/context';
+import toast from 'react-hot-toast';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faImage, faMinus, faPlus, faTimesCircle, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
+import cn from 'classnames';
+import Link from 'next/link';
 
 interface PatientCardProps {
   date: string;
@@ -64,13 +57,10 @@ function FileInput({
 
   return (
     <div
-      className={cn(
-        "w-full relative border min-h-[200px] hover:border-gray-400 transition lg:w-[300px] rounded-xl",
-        {
-          "border-dashed": !value,
-          "border-verde-salud bg-verde-salud/10": !!value,
-        },
-      )}
+      className={cn('w-full relative border min-h-[200px] hover:border-gray-400 transition lg:w-[300px] rounded-xl', {
+        'border-dashed': !value,
+        'border-verde-salud bg-verde-salud/10': !!value,
+      })}
     >
       {value && (
         <button
@@ -97,13 +87,13 @@ function FileInput({
       >
         {value ? (
           <div className="flex justify-center items-center w-full h-full">
-            {value.type.startsWith("image") && (
+            {value.type.startsWith('image') && (
               <img
                 src={URL.createObjectURL(value as unknown as File)}
                 className="object-cover w-full h-full rounded-xl"
               />
             )}
-            {value.type.startsWith("video") && (
+            {value.type.startsWith('video') && (
               <video
                 src={URL.createObjectURL(value as unknown as File)}
                 className="object-cover w-full h-full rounded-xl"
@@ -112,7 +102,7 @@ function FileInput({
                 loop
               />
             )}
-            {value.type === "application/dicom" && (
+            {value.type === 'application/dicom' && (
               <div className="flex flex-col gap-1 text-verde-salud">
                 <FontAwesomeIcon icon={faUserDoctor} className="text-5xl" />
                 {value.name}
@@ -135,48 +125,42 @@ export default function CrearReporte() {
 
   const { data: patients } = client.patients.useSwr((f) => f.all())();
 
-  const [study, setStudy] = useState("");
-  const [tecnic, setTecnic] = useState("");
-  const [reason, setReason] = useState("");
-  const [observations, setObservations] = useState([""]);
-  const [patientId, setPatientId] = useState("");
+  const [study, setStudy] = useState('');
+  const [tecnic, setTecnic] = useState('');
+  const [reason, setReason] = useState('');
+  const [observations, setObservations] = useState(['']);
+  const [patientId, setPatientId] = useState('');
   const [files, setFiles] = useState<File[]>([]);
 
   const [saved, setSaved] = useState(false);
   const [savedId, setSavedId] = useState<string>();
 
-  const { data: pPatient } = client.patients.useSwr(
-    (f) => f.one(patientId || ""),
-    Boolean(patientId),
-  )();
+  const { data: pPatient } = client.patients.useSwr((f) => f.one(patientId || ''), Boolean(patientId))();
 
   const handlePublish = async () => {
     const f = async () => {
-      if (!savedId) throw new Error("No se ha guardado el reporte");
+      if (!savedId) throw new Error('No se ha guardado el reporte');
 
       client.reports.publish(savedId).submit();
     };
 
     toast.promise(f(), {
-      loading: "Publicando...",
-      success: "Publicado",
+      loading: 'Publicando...',
+      success: 'Publicado',
       error: (e) => e.message,
     });
   };
 
   const handleSave = async () => {
     const f = async () => {
-      const howManyImagesAre = files.filter((file) =>
-        file.type.startsWith("image"),
-      ).length;
+      const howManyImagesAre = files.filter((file) => file.type.startsWith('image')).length;
 
-      if (howManyImagesAre < 4)
-        throw new Error("Se necesitan al menos 4 imágenes");
+      if (howManyImagesAre < 4) throw new Error('Se necesitan al menos 4 imágenes');
 
       const savedFiles = await Promise.all(
         files.map(async (file) => {
           return await client.files.upload(file).submit();
-        }),
+        })
       );
 
       const r = await client.reports
@@ -194,11 +178,11 @@ export default function CrearReporte() {
       await client.reports
         .attachMedia(r._id, {
           content: savedFiles.map((file) => ({
-            type: file.contentType.startsWith("image")
-              ? "image"
-              : file.contentType.startsWith("video")
-                ? "video"
-                : "dicom",
+            type: file.contentType.startsWith('image')
+              ? 'image'
+              : file.contentType.startsWith('video')
+              ? 'video'
+              : 'dicom',
             id: file._id,
           })),
         })
@@ -209,8 +193,8 @@ export default function CrearReporte() {
 
     void toast
       .promise(f(), {
-        loading: "Guardando...",
-        success: "Guardado",
+        loading: 'Guardando...',
+        success: 'Guardado',
         error: (e) => e.message,
       })
       .then(() => {
@@ -219,7 +203,7 @@ export default function CrearReporte() {
   };
 
   const addObservation = () => {
-    setObservations([...observations, ""]);
+    setObservations([...observations, '']);
   };
 
   const removeObservation = (index: number) => {
@@ -234,10 +218,7 @@ export default function CrearReporte() {
 
   return (
     <ProfileLayout title="Expediente">
-      <Link
-        href={"/medico"}
-        className="flex items-center self-start gap-2 text-verde-salud font-bold lg:text-xl"
-      >
+      <Link href={'/medico'} className="flex items-center self-start gap-2 text-verde-salud font-bold lg:text-xl">
         <FontAwesomeIcon icon={faArrowLeft} />
         <p>Regresa a la lista de pacientes</p>
       </Link>
@@ -252,11 +233,11 @@ export default function CrearReporte() {
             <div className="text-gray-600">
               {pPatient && (
                 <>
-                  {new Date(pPatient?.birthday).toLocaleString("es-MX", {
-                    year: "numeric",
-                    month: "long",
-                    day: "2-digit",
-                    timeZone: "UTC",
+                  {new Date(pPatient?.birthday).toLocaleString('es-MX', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: '2-digit',
+                    timeZone: 'UTC',
                   })}
                 </>
               )}
@@ -264,20 +245,14 @@ export default function CrearReporte() {
           </div>
           <div className="flex flex-col lg:flex-row lg:gap-2">
             <div className="font-bold">Edad:</div>
-            <div className="text-gray-600">
-              {pPatient && <>{getAge(new Date(pPatient.birthday))} años</>}
-            </div>
+            <div className="text-gray-600">{pPatient && <>{getAge(new Date(pPatient.birthday))} años</>}</div>
           </div>
           <div className="flex flex-col lg:flex-row lg:gap-2">
             <div className="font-bold">Sexo:</div>
             <div className="text-gray-600">{pPatient?.gender}</div>
           </div>
         </div>
-        <img
-          src="/images/women.png"
-          className=" aspect-square w-40 h-40 lg:w-[200px] lg:h-[200px]"
-          alt="logo"
-        />
+        <img src="/images/women.png" className=" aspect-square w-40 h-40 lg:w-[200px] lg:h-[200px]" alt="logo" />
       </div>
       <div className="flex flex-col w-full px-12 gap-2 lg:text-xl">
         <select
@@ -286,12 +261,13 @@ export default function CrearReporte() {
           value={patientId}
           disabled={saved}
         >
-          <option disabled value="" selected={patientId === undefined}>
+          <option className="font-sans" disabled value="" selected={patientId === undefined}>
             Selecciona un paciente
           </option>
 
           {patients?.map((patient) => (
             <option
+              className="font-sans font-bold"
               key={patient._id}
               value={patient._id}
               selected={patientId === patient._id}
@@ -300,28 +276,16 @@ export default function CrearReporte() {
             </option>
           ))}
         </select>
-        <Input
-          placeholder="Tecnica"
-          onInputChange={setTecnic}
-          disabled={saved}
-        />
-        <Input
-          placeholder="Motivo del estudio"
-          onInputChange={setReason}
-          disabled={saved}
-        />
-        <Input
-          placeholder="Estudio"
-          onInputChange={setStudy}
-          disabled={saved}
-        />
+        <Input placeholder="Tecnica" onInputChange={setTecnic} disabled={saved} />
+        <Input placeholder="Motivo del estudio" onInputChange={setReason} disabled={saved} />
+        <Input placeholder="Estudio" onInputChange={setStudy} disabled={saved} />
         <div className="flex flex-col w-full items-center gap-1">
           {observations.map((observation, index) => (
             <div key={index} className="flex w-full items-center gap-1">
               <input
                 value={observation}
                 onChange={(e) => handleObservationChange(index, e.target.value)}
-                placeholder={"Observaciones"}
+                placeholder={'Observaciones'}
                 className={`w-full font-medium border-2 rounded-md lg:p-4 p-2 border-gray-400 placeholder:text-gray-400 lg:text-xl`}
               />
               {index === observations.length - 1 ? (
@@ -332,10 +296,7 @@ export default function CrearReporte() {
                   />
                 </button>
               ) : (
-                <button
-                  onClick={() => removeObservation(index)}
-                  className="flex self-center"
-                >
+                <button onClick={() => removeObservation(index)} className="flex self-center">
                   <FontAwesomeIcon
                     icon={faMinus}
                     className="aspect-square border-2 rounded-md p-3 lg:p-5 border-gray-400 placeholder:text-gray-400"
