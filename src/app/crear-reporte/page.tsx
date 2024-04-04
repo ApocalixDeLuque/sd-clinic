@@ -1,13 +1,16 @@
 'use client';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useRef, useState } from 'react';
 
 import ProfileLayout from '@/app/components/ProfileLayout';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { useClient } from '@/api/context';
 import toast from 'react-hot-toast';
+import { useSession } from '@/api/session';
+import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faImage, faMinus, faPlus, faTimesCircle, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
+import cn from 'classnames';
 
 interface PatientCardProps {
   date: string;
@@ -27,6 +30,100 @@ const patientInfo = {
   branch: 'Guadalajara Centro',
 };
 
+function FileInput({
+  value,
+  onFileChange: setValue,
+  disableClick,
+  onDelete,
+}: {
+  value?: File | null;
+  onFileChange?: (file: File) => void;
+  onDelete?: () => void;
+  disableClick?: boolean;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // URL.createObjectURL(file);
+      setValue?.(file);
+    }
+  };
+
+  const handleOnClick = () => {
+    if (disableClick) return;
+
+    if (ref.current) {
+      ref.current.click();
+    }
+  };
+
+  return (
+    <div
+      className={cn('relative border min-h-[200px] hover:border-gray-400 transition w-[300px] rounded-xl', {
+        'border-dashed': !value,
+        'border-verde-salud bg-verde-salud/10': !!value,
+      })}
+    >
+      {value && (
+        <button
+          className="absolute text-white right-0 p-2 text-2xl mix-blend-difference z-50"
+          onClick={() => {
+            onDelete?.();
+          }}
+        >
+          <FontAwesomeIcon icon={faTimesCircle} />
+        </button>
+      )}
+
+      <input
+        // accept images, videos and dcm files
+        accept="image/*, video/*, .dcm"
+        type="file"
+        className="hidden"
+        ref={ref}
+        onChange={handleOnChange}
+      />
+      <button
+        className="text-gray-300 hover:text-gray-400 flex flex-col justify-center items-center gap-2 rounded-2xl w-full h-full"
+        onClick={handleOnClick}
+      >
+        {value ? (
+          <div className="flex justify-center items-center w-full h-full">
+            {value.type.startsWith('image') && (
+              <img
+                src={URL.createObjectURL(value as unknown as File)}
+                className="object-cover w-full h-full rounded-xl"
+              />
+            )}
+            {value.type.startsWith('video') && (
+              <video
+                src={URL.createObjectURL(value as unknown as File)}
+                className="object-cover w-full h-full rounded-xl"
+                autoPlay
+                muted
+                loop
+              />
+            )}
+            {value.type === 'application/dicom' && (
+              <div className="flex flex-col gap-1 text-verde-salud">
+                <FontAwesomeIcon icon={faUserDoctor} className="text-5xl" />
+                {value.name}
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <FontAwesomeIcon icon={faImage} className="text-5xl" />
+            <div className="text-sm">Agregar un archivo</div>
+          </>
+        )}
+      </button>
+    </div>
+  );
+}
+
 const CrearReporte: React.FC<PatientCardProps> = ({
   date = patientInfo.date,
   patientName = patientInfo.patientName,
@@ -37,13 +134,23 @@ const CrearReporte: React.FC<PatientCardProps> = ({
 }) => {
   const { client } = useClient();
 
+  const [medicName, setMedicName] = useState();
   const [study, setStudy] = useState('');
   const [tecnic, setTecnic] = useState('');
   const [reason, setReason] = useState('');
   const [observations, setObservations] = useState(['']);
+  const [files, setFiles] = useState<File[]>([]);
+
+  const [saved, setSaved] = useState(false);
 
   const handleSave = async () => {
     const f = async () => {
+      const savedFiles = await Promise.all(
+        files.map(async (file) => {
+          return await client.files.upload(file).submit();
+        })
+      );
+
       const r = await client.reports
         .create({
           patientId: '660e027665a681ae8fff3ffa',
@@ -53,7 +160,20 @@ const CrearReporte: React.FC<PatientCardProps> = ({
           observations,
         })
         .submit();
-      console.log(r);
+
+      await client.reports
+        .attachMedia(r._id, {
+          content: savedFiles.map((file) => ({
+            type: file.contentType.startsWith('image')
+              ? 'image'
+              : file.contentType.startsWith('video')
+              ? 'video'
+              : 'dicom',
+            id: file._id,
+          })),
+        })
+        .submit();
+
       return r;
     };
 
@@ -63,14 +183,9 @@ const CrearReporte: React.FC<PatientCardProps> = ({
         success: 'Guardado',
         error: 'Error al guardar',
       })
-      .then();
-  };
-
-  const handlePrint = () => {
-    toast.success('Imprimiendo...');
-    setTimeout(() => {
-      handleSave();
-    }, 3000);
+      .then(() => {
+        setSaved(true);
+      });
   };
 
   const addObservation = () => {
@@ -150,9 +265,27 @@ const CrearReporte: React.FC<PatientCardProps> = ({
           ))}
         </div>
 
-        <div className="w-full h-64 font-medium border-2 rounded-md p-2 border-gray-400 placeholder:text-gray-400"></div>
-        <Button text="Imprimir" onClick={handlePrint} selected />
-        <Button text="Guardar" onClick={handleSave} selected />
+        <div className="w-full font-medium rounded-md p-2 border-gray-400 placeholder:text-gray-400 grid grid-cols-3 gap-5">
+          {files.map((file) => (
+            <FileInput
+              value={file}
+              key={file.name}
+              disableClick
+              onDelete={() => {
+                setFiles((prev) => {
+                  return prev.filter((f) => f !== file);
+                });
+              }}
+            />
+          ))}
+          <FileInput
+            onFileChange={(file) => {
+              setFiles([...files, file]);
+            }}
+          />
+        </div>
+
+        {saved ? <Button text="Guardar" onClick={handleSave} selected /> : <Button text="Publicar" selected />}
       </div>
     </ProfileLayout>
   );

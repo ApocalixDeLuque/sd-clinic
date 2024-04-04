@@ -102,7 +102,7 @@ export class Client {
         data: {
           content: {
             id: string;
-            type: 'image' | 'dicom';
+            type: 'image' | 'dicom' | 'video';
           }[];
         }
       ) {
@@ -172,14 +172,18 @@ export class Client {
 
   get files() {
     return new (class Files extends BaseAction {
-      upload(file: Blob) {
+      upload(file: Blob | Buffer) {
         const formData = new FormData();
 
         formData.append('', file);
 
         const { operation } = this.client.prepare<{
-          message: string;
-        }>(this.endpoint + 'upload', 'POST', formData);
+          _id: string;
+          url: string;
+          name: string;
+          size: number;
+          contentType: string;
+        }>(this.endpoint, 'POST', formData);
         return operation;
       }
 
