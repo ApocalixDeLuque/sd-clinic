@@ -317,7 +317,7 @@ const CrearReporte: React.FC<PatientCardProps> = ({
                 <button onClick={() => removeObservation(index)} className="flex self-center">
                   <FontAwesomeIcon
                     icon={faMinus}
-                    className="aspect-square border-2 rounded-md p-3 border-gray-400 placeholder:text-gray-400"
+                    className="aspect-square border-2 rounded-md p-3 lg:p-5 border-gray-400 placeholder:text-gray-400"
                   />
                 </button>
               )}

@@ -10,6 +10,8 @@ const SectionsMenu = () => {
   useEffect(() => {
     if (typeof window !== 'undefined' && window.location.pathname === '/perfil') {
       setSelectedButton('Mis Ultrasonidos');
+    } else if (typeof window !== 'undefined' && window.location.pathname === '/medico') {
+      setSelectedButton('Mis Pacientes');
     }
   }, []);
   const handleButtonClick = (buttonText: string) => {
@@ -26,12 +28,14 @@ const SectionsMenu = () => {
           onClick={() => handleButtonClick('Mis Pacientes')}
         />
       )}
-      <Button
-        text={'Mis Ultrasonidos'}
-        selected={selectedButton === 'Mis Ultrasonidos'}
-        link={'/perfil'}
-        onClick={() => handleButtonClick('Mis Ultrasonidos')}
-      />
+      {!user?.isAdmin && (
+        <Button
+          text={'Mis Ultrasonidos'}
+          selected={selectedButton === 'Mis Ultrasonidos'}
+          link={'/perfil'}
+          onClick={() => handleButtonClick('Mis Ultrasonidos')}
+        />
+      )}
       <Button
         text="Próximas citas"
         selected={selectedButton === 'Próximas citas'}

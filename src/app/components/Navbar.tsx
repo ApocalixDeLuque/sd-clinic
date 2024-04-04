@@ -22,7 +22,7 @@ const Navbar = () => {
       onClick={handleClickOutside}
       className="flex w-full items-center justify-between border-b p-4 lg:max-w-[1500px]"
     >
-      <Link href={'/'} className="aspect-[120/25]">
+      <Link href={isAuth ? '/perfil' : '/'} className="aspect-[120/25]">
         <img src="/images/logo.png" className="lg:h-12" alt="logo" />
       </Link>
       <button
@@ -41,7 +41,7 @@ const Navbar = () => {
           className="flex flex-col items-center w-full fixed top-0 bottom-0 right-0 z-50 bg-white gap-8"
         >
           <div className="flex w-full items-center justify-between self-center p-4 lg:max-w-[1500px]">
-            <Link onClick={() => setIsSidebarOpen(false)} href={'/'} className="aspect-[120/25]">
+            <Link onClick={() => setIsSidebarOpen(false)} href={isAuth ? '/perfil' : '/'} className="aspect-[120/25]">
               <img src="/images/logo.png" className="lg:h-12" alt="logo" />
             </Link>
             <button onClick={() => setIsSidebarOpen(false)} className="self-end">
