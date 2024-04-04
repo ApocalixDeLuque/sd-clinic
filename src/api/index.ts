@@ -1,12 +1,17 @@
-import axios, { AxiosInstance, Method, RawAxiosRequestHeaders } from 'axios';
-import { makeURL } from '@nauverse/make-url';
-import useSWR, { SWRConfiguration, SWRResponse } from 'swr';
-import type { Report } from './entities';
+import axios, { AxiosInstance, Method, RawAxiosRequestHeaders } from "axios";
+import { makeURL } from "@nauverse/make-url";
+import useSWR, { SWRConfiguration, SWRResponse } from "swr";
+import type { Report } from "./entities";
 
 interface Request {
   url: string;
   method: Method;
-  data: Record<string, unknown> | Record<string, unknown>[] | FormData | string | undefined;
+  data:
+    | Record<string, unknown>
+    | Record<string, unknown>[]
+    | FormData
+    | string
+    | undefined;
   params: Record<string, unknown> | FormData | undefined;
   headers: RawAxiosRequestHeaders;
 }
@@ -19,13 +24,16 @@ function buildQueryString(params: Record<string, unknown>): string {
       const value = params[key];
       return `${key}=${encodeURI(String(value))}`;
     })
-    .join('&');
+    .join("&");
 
   return queryString;
 }
 
 export class ApiError extends Error {
-  constructor(message: string, public readonly httpCode: number) {
+  constructor(
+    message: string,
+    public readonly httpCode: number,
+  ) {
     super(message);
   }
 }
@@ -33,19 +41,22 @@ export class ApiError extends Error {
 export class Client {
   private readonly client: AxiosInstance;
   private readonly t: string;
-  private route: 'admin' | 'user' | 'auth' | 'public' = 'admin';
+  private route: "admin" | "user" | "auth" | "public" = "admin";
 
-  constructor(private readonly baseUrl: string, t: string) {
+  constructor(
+    private readonly baseUrl: string,
+    t: string,
+  ) {
     this.t = t;
 
     this.client = axios.create({
       headers: {
-        Accept: 'application/json',
+        Accept: "application/json",
       },
     });
   }
 
-  setScope(scope: 'admin' | 'user' | 'auth' | 'public') {
+  setScope(scope: "admin" | "user" | "auth" | "public") {
     this.route = scope;
   }
 
@@ -54,41 +65,70 @@ export class Client {
   }
 
   get hasToken() {
-    return this.t !== '';
+    return this.t !== "";
   }
 
   get auth() {
     return new (class Auth extends BaseAction {
       login(data: { id: string; password: string }) {
-        const { operation } = this.client.prepare<{ token: string }>('login', 'POST', data, undefined, {
-          route: 'auth',
-        });
+        const { operation } = this.client.prepare<{ token: string }>(
+          "login",
+          "POST",
+          data,
+          undefined,
+          {
+            route: "auth",
+          },
+        );
         return operation;
       }
 
       renew(token: string) {
-        const { operation } = this.client.prepare<{ token: string }>('renew', 'POST', { token });
+        const { operation } = this.client.prepare<{ token: string }>(
+          "renew",
+          "POST",
+          { token },
+        );
         return operation;
       }
 
-      register(data: { name: string; phone: string; email: string; password: string }) {
-        const { operation } = this.client.prepare<{ token: string }>('register', 'POST', data, undefined, {
-          route: 'auth',
-        });
+      register(data: {
+        name: string;
+        phone: string;
+        email: string;
+        password: string;
+      }) {
+        const { operation } = this.client.prepare<{ token: string }>(
+          "register",
+          "POST",
+          data,
+          undefined,
+          {
+            route: "auth",
+          },
+        );
         return operation;
       }
-    })(this, '');
+    })(this, "");
   }
 
   get reports() {
     return new (class Reports extends BaseAction {
       all() {
-        const { operation } = this.client.prepare<Report[]>(this.endpoint + '/', 'GET');
+        const { operation } = this.client.prepare<Report[]>(
+          this.endpoint + "/",
+          "GET",
+        );
         return operation;
       }
 
       one(id: string, secret?: string) {
-        const { operation } = this.client.prepare<Report>(this.endpoint + '/:id', 'GET', { secret }, { id });
+        const { operation } = this.client.prepare<Report>(
+          this.endpoint + "/:id",
+          "GET",
+          { secret },
+          { id },
+        );
         return operation;
       }
 
@@ -100,7 +140,11 @@ export class Client {
         study: string;
         observations: string[];
       }) {
-        const { operation } = this.client.prepare<Report>(this.endpoint + '/', 'POST', data);
+        const { operation } = this.client.prepare<Report>(
+          this.endpoint + "/",
+          "POST",
+          data,
+        );
         return operation;
       }
 
@@ -109,35 +153,44 @@ export class Client {
         data: {
           content: {
             id: string;
-            type: 'image' | 'dicom';
+            type: "image" | "dicom" | "video";
           }[];
-        }
+        },
       ) {
         const { operation } = this.client.prepare<{
           message: string;
-        }>(this.endpoint + '/:id/media', 'POST', data, { id });
+        }>(this.endpoint + "/:id/media", "POST", data, { id });
         return operation;
       }
 
       publish(id: string) {
         const { operation } = this.client.prepare<{
           message: string;
-        }>(this.endpoint + `/:id/publish`, 'POST', undefined, { id });
+        }>(this.endpoint + `/:id/publish`, "POST", undefined, { id });
         return operation;
       }
 
-      getMedia(id: string, mediaId: 'collage' | string) {
-        const { operation } = this.client.prepare<Blob>(`/:id/media/:media.png`, 'GET', undefined, {
-          id,
-          media: mediaId,
-        });
+      getMedia(id: string, mediaId: "collage" | string) {
+        const { operation } = this.client.prepare<Blob>(
+          `/:id/media/:media.png`,
+          "GET",
+          undefined,
+          {
+            id,
+            media: mediaId,
+          },
+        );
         return operation;
       }
 
-      buildMediaURL(id: string, mediaId: 'collage' | string, forcePublic = false) {
+      buildMediaURL(
+        id: string,
+        mediaId: "collage" | string,
+        forcePublic = false,
+      ) {
         return makeURL(
           this.client.baseUrl,
-          forcePublic ? 'public' : this.client.route,
+          forcePublic ? "public" : this.client.route,
           this.endpoint,
           `/:id/media/:media.png`,
           {
@@ -145,7 +198,7 @@ export class Client {
               id,
               media: mediaId,
             },
-          }
+          },
         );
       }
 
@@ -153,67 +206,97 @@ export class Client {
         id: string,
         data: {
           expiresAt?: string;
-        }
+        },
       ) {
         const { operation } = this.client.prepare<{
           secret: string;
-        }>(this.endpoint + `/:id/secret`, 'POST', data, { id });
+        }>(this.endpoint + `/:id/secret`, "POST", data, { id });
         return operation;
       }
-    })(this, '/reports');
+    })(this, "/reports");
   }
 
   get patients() {
     return new (class Patients extends BaseAction {
       all() {
-        const { operation } = this.client.prepare<Report[]>(this.endpoint, 'GET');
+        const { operation } = this.client.prepare<Report[]>(
+          this.endpoint,
+          "GET",
+        );
         return operation;
       }
 
       one(id: string) {
-        const { operation } = this.client.prepare<Report>(this.endpoint + '/:id', 'GET', undefined, { id });
+        const { operation } = this.client.prepare<Report>(
+          this.endpoint + "/:id",
+          "GET",
+          undefined,
+          { id },
+        );
         return operation;
       }
-    })(this, '/patients');
+    })(this, "/patients");
   }
 
   get files() {
     return new (class Files extends BaseAction {
-      upload(file: Blob) {
+      upload(file: Blob | Buffer) {
         const formData = new FormData();
 
-        formData.append('', file);
+        formData.append("", file);
 
         const { operation } = this.client.prepare<{
-          message: string;
-        }>(this.endpoint + 'upload', 'POST', formData);
+          _id: string;
+          url: string;
+          name: string;
+          size: number;
+          contentType: string;
+        }>(this.endpoint, "POST", formData);
         return operation;
       }
 
       one(id: string) {
-        const { operation } = this.client.prepare<Blob>(this.endpoint + '/:id', 'GET', undefined, { id });
+        const { operation } = this.client.prepare<Blob>(
+          this.endpoint + "/:id",
+          "GET",
+          undefined,
+          { id },
+        );
         return operation;
       }
 
       raw(id: string) {
-        const { operation } = this.client.prepare<Blob>(this.endpoint + '/:id/raw', 'GET', undefined, { id });
+        const { operation } = this.client.prepare<Blob>(
+          this.endpoint + "/:id/raw",
+          "GET",
+          undefined,
+          { id },
+        );
         return operation;
       }
-    })(this, 'files');
+    })(this, "files");
   }
 
   prepare<T>(
     path: string,
     method: Method,
-    body?: Record<string, unknown> | Record<string, unknown>[] | FormData | string,
+    body?:
+      | Record<string, unknown>
+      | Record<string, unknown>[]
+      | FormData
+      | string,
     params?: Record<string, unknown>,
     config?: {
       removeAuth?: boolean;
-      route?: 'admin' | 'user' | 'auth' | 'public';
-    }
+      route?: "admin" | "user" | "auth" | "public";
+    },
   ) {
-    const route = makeURL(this.baseUrl, '/', config?.route ?? this.route ?? 'admin');
-    let url = makeURL(route, '/', path);
+    const route = makeURL(
+      this.baseUrl,
+      "/",
+      config?.route ?? this.route ?? "admin",
+    );
+    let url = makeURL(route, "/", path);
 
     if (params) {
       url = makeURL(url, {
@@ -221,8 +304,8 @@ export class Client {
       });
     }
 
-    if (method === 'GET' && body) {
-      if (typeof body === 'string') {
+    if (method === "GET" && body) {
+      if (typeof body === "string") {
         url = `${url}?${body}`;
       } else {
         const params = buildQueryString(body as Record<string, unknown>);
@@ -242,7 +325,7 @@ export class Client {
     const request = {
       url,
       method,
-      data: method !== 'GET' ? body : undefined,
+      data: method !== "GET" ? body : undefined,
       params: undefined,
       headers,
     };
@@ -292,18 +375,18 @@ export abstract class BaseAction {
   constructor(
     public readonly client: Client,
     public readonly endpoint: string,
-    public readonly routeType: 'admin' | 'user' | 'auth' | 'public' = 'admin'
+    public readonly routeType: "admin" | "user" | "auth" | "public" = "admin",
   ) {}
 
   useSwr<B>(
     func: (action: this) => Route<B>,
-    condition = true
+    condition = true,
   ): (conf?: SWRConfiguration<B, unknown>) => SWRResponse<B> {
     return (conf?: SWRConfiguration<B, unknown>) => {
       if (!condition)
         return useSWR(
           () => undefined,
-          () => Promise.reject()
+          () => Promise.reject(),
         );
 
       const { submit, route } = func(this);
