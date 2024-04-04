@@ -71,7 +71,7 @@ export class Client {
         return operation;
       }
 
-      register(data: { id: string; password: string }) {
+      register(data: { name: string; phone: string; email: string; password: string }) {
         const { operation } = this.client.prepare<{ token: string }>('register', 'POST', data, undefined, {
           route: 'auth',
         });
@@ -92,7 +92,14 @@ export class Client {
         return operation;
       }
 
-      create(data: { patientId: string; reason: string; tecnic: string; study: string; observations: string[] }) {
+      create(data: {
+        patientId: string;
+        doctorId: string;
+        reason: string;
+        tecnic: string;
+        study: string;
+        observations: string[];
+      }) {
         const { operation } = this.client.prepare<Report>(this.endpoint + '/', 'POST', data);
         return operation;
       }
@@ -108,14 +115,14 @@ export class Client {
       ) {
         const { operation } = this.client.prepare<{
           message: string;
-        }>('/:id/media', 'POST', data, { id });
+        }>(this.endpoint + '/:id/media', 'POST', data, { id });
         return operation;
       }
 
       publish(id: string) {
         const { operation } = this.client.prepare<{
           message: string;
-        }>(`/:id/publish`, 'POST', undefined, { id });
+        }>(this.endpoint + `/:id/publish`, 'POST', undefined, { id });
         return operation;
       }
 
@@ -150,10 +157,24 @@ export class Client {
       ) {
         const { operation } = this.client.prepare<{
           secret: string;
-        }>(`/:id/secret`, 'POST', data, { id });
+        }>(this.endpoint + `/:id/secret`, 'POST', data, { id });
         return operation;
       }
     })(this, '/reports');
+  }
+
+  get patients() {
+    return new (class Patients extends BaseAction {
+      all() {
+        const { operation } = this.client.prepare<Report[]>(this.endpoint, 'GET');
+        return operation;
+      }
+
+      one(id: string) {
+        const { operation } = this.client.prepare<Report>(this.endpoint + '/:id', 'GET', undefined, { id });
+        return operation;
+      }
+    })(this, '/patients');
   }
 
   get files() {
@@ -165,17 +186,17 @@ export class Client {
 
         const { operation } = this.client.prepare<{
           message: string;
-        }>('upload', 'POST', formData);
+        }>(this.endpoint + 'upload', 'POST', formData);
         return operation;
       }
 
       one(id: string) {
-        const { operation } = this.client.prepare<Blob>('/:id', 'GET', undefined, { id });
+        const { operation } = this.client.prepare<Blob>(this.endpoint + '/:id', 'GET', undefined, { id });
         return operation;
       }
 
       raw(id: string) {
-        const { operation } = this.client.prepare<Blob>('/:id/raw', 'GET', undefined, { id });
+        const { operation } = this.client.prepare<Blob>(this.endpoint + '/:id/raw', 'GET', undefined, { id });
         return operation;
       }
     })(this, 'files');
@@ -205,7 +226,7 @@ export class Client {
         url = `${url}?${body}`;
       } else {
         const params = buildQueryString(body as Record<string, unknown>);
-        if (params.length > 0) url = `${url}?${params}`;
+        if (params.length > 0) url = `${url}?${params} `;
       }
     }
 
@@ -214,7 +235,7 @@ export class Client {
     if (!config?.removeAuth) {
       headers = {
         ...headers,
-        Authorization: `Bearer ${this.t}`,
+        Authorization: `Bearer ${this.t} `,
       };
     }
 

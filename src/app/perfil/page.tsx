@@ -7,9 +7,7 @@ import { useAuthenticated } from '../hooks/useAuthenticated';
 import { useClient } from '@/api/context';
 
 export default function ProfilePage() {
-  const { user } = useSession();
   const { client } = useClient('user');
-  const session = useSession();
 
   useAuthenticated();
 
