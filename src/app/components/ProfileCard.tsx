@@ -1,6 +1,7 @@
 import React from 'react';
 import SectionsMenu from './SectionsMenu';
 import { useSession } from '@/api/session';
+import Button from './Button';
 
 const ProfileCard = () => {
   const { user } = useSession();
@@ -37,6 +38,7 @@ const ProfileCard = () => {
           className="aspect-square w-8 self-start"
         /> */}
       </div>
+
       <SectionsMenu />
     </div>
   );

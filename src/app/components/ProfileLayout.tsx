@@ -12,13 +12,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ title, children }) => {
-  const { user } = useSession();
-  const { client } = useClient('user');
-  const session = useSession();
-
   useAuthenticated();
-
-  const { data } = client.reports.useSwr((f) => f.all())();
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-white text-black">

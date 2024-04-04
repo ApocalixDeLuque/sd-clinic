@@ -7,15 +7,6 @@ import Button from '../components/Button';
 import { useClient } from '@/api/context';
 import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImage, faMinus, faPlus, faTimesCircle, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
-import cn from 'classnames';
-
-import ProfileLayout from '@/app/components/ProfileLayout';
-import Input from '../components/Input';
-import Button from '../components/Button';
-import { useClient } from '@/api/context';
-import toast from 'react-hot-toast';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faImage, faMinus, faPlus, faTimesCircle, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
 import cn from 'classnames';
 import Link from 'next/link';
@@ -149,7 +140,6 @@ const CrearReporte: React.FC<PatientCardProps> = ({
 
   const { data: patients } = client.patients.useSwr((f) => f.all())();
 
-  const [medicName, setMedicName] = useState();
   const [study, setStudy] = useState('');
   const [tecnic, setTecnic] = useState('');
   const [reason, setReason] = useState('');
@@ -172,7 +162,7 @@ const CrearReporte: React.FC<PatientCardProps> = ({
     toast.promise(f(), {
       loading: 'Publicando...',
       success: 'Publicado',
-      error: 'Error al publicar',
+      error: (e) => e.message,
     });
   };
 
@@ -243,7 +233,7 @@ const CrearReporte: React.FC<PatientCardProps> = ({
 
   return (
     <ProfileLayout title="Expediente">
-      <Link href={'/medico'} className="flex items-center self-start gap-2 text-verde-salud font-bold">
+      <Link href={'/medico'} className="flex items-center self-start gap-2 text-verde-salud font-bold lg:text-xl">
         <FontAwesomeIcon icon={faArrowLeft} />
         <p>Regresa a la lista de pacientes</p>
       </Link>
@@ -287,9 +277,9 @@ const CrearReporte: React.FC<PatientCardProps> = ({
         </div>
         <img src="/images/women.png" className=" aspect-square w-40 h-40 lg:w-[200px] lg:h-[200px]" alt="logo" />
       </div>
-      <div className="flex flex-col w-full px-12 gap-2">
+      <div className="flex flex-col w-full px-12 gap-2 lg:text-xl">
         <select
-          className={`w-full font-medium border-2 rounded-md p-2  border-gray-400`}
+          className={`w-full font-medium border-2 rounded-md p-2 lg:p-4 border-gray-400`}
           onChange={(e) => setPatientId(e.target.value)}
           value={patientId}
           disabled={saved}
@@ -314,13 +304,13 @@ const CrearReporte: React.FC<PatientCardProps> = ({
                 value={observation}
                 onChange={(e) => handleObservationChange(index, e.target.value)}
                 placeholder={'Observaciones'}
-                className={`w-full font-medium border-2 rounded-md p-2 border-gray-400 placeholder:text-gray-400`}
+                className={`w-full font-medium border-2 rounded-md lg:p-4 p-2 border-gray-400 placeholder:text-gray-400 lg:text-xl`}
               />
               {index === observations.length - 1 ? (
                 <button onClick={addObservation} className="flex self-center">
                   <FontAwesomeIcon
                     icon={faPlus}
-                    className="aspect-square border-2 rounded-md p-3 border-gray-400 placeholder:text-gray-400"
+                    className="aspect-square border-2 rounded-md p-3 lg:p-5 border-gray-400 placeholder:text-gray-400"
                   />
                 </button>
               ) : (
@@ -356,7 +346,11 @@ const CrearReporte: React.FC<PatientCardProps> = ({
           />
         </div>
 
-        {saved ? <Button text="Guardar" onClick={handleSave} selected /> : <Button text="Publicar" selected />}
+        {!saved ? (
+          <Button text="Guardar" onClick={handleSave} selected />
+        ) : (
+          <Button text="Publicar" onClick={handlePublish} selected />
+        )}
       </div>
     </ProfileLayout>
   );
