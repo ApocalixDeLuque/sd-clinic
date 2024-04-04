@@ -140,7 +140,11 @@ export class Client {
         study: string;
         observations: string[];
       }) {
-        const { operation } = this.client.prepare<Report>("/", "POST", data);
+        const { operation } = this.client.prepare<Report>(
+          this.endpoint + "/",
+          "POST",
+          data,
+        );
         return operation;
       }
 
@@ -155,14 +159,14 @@ export class Client {
       ) {
         const { operation } = this.client.prepare<{
           message: string;
-        }>("/:id/media", "POST", data, { id });
+        }>(this.endpoint + "/:id/media", "POST", data, { id });
         return operation;
       }
 
       publish(id: string) {
         const { operation } = this.client.prepare<{
           message: string;
-        }>(`/:id/publish`, "POST", undefined, { id });
+        }>(this.endpoint + `/:id/publish`, "POST", undefined, { id });
         return operation;
       }
 
@@ -243,13 +247,13 @@ export class Client {
 
         const { operation } = this.client.prepare<{
           message: string;
-        }>("upload", "POST", formData);
+        }>(this.endpoint + "upload", "POST", formData);
         return operation;
       }
 
       one(id: string) {
         const { operation } = this.client.prepare<Blob>(
-          "/:id",
+          this.endpoint + "/:id",
           "GET",
           undefined,
           { id },
@@ -259,7 +263,7 @@ export class Client {
 
       raw(id: string) {
         const { operation } = this.client.prepare<Blob>(
-          "/:id/raw",
+          this.endpoint + "/:id/raw",
           "GET",
           undefined,
           { id },
