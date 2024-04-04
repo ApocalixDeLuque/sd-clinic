@@ -16,6 +16,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import cn from "classnames";
 
+import ProfileLayout from '@/app/components/ProfileLayout';
+import Input from '../components/Input';
+import Button from '../components/Button';
+import { useClient } from '@/api/context';
+import toast from 'react-hot-toast';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faImage, faMinus, faPlus, faTimesCircle, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
+import cn from 'classnames';
 interface PatientCardProps {
   date: string;
   patientName: string;
@@ -26,12 +34,12 @@ interface PatientCardProps {
 }
 
 const patientInfo = {
-  date: "Martes, 02 de abril de 2024",
-  patientName: "Maria Fernanda Ramirez Gonzalez",
-  birthDate: "Lunes, 01 de abril de 2024",
+  date: 'Martes, 02 de abril de 2024',
+  patientName: 'Maria Fernanda Ramirez Gonzalez',
+  birthDate: 'Lunes, 01 de abril de 2024',
   age: 24,
-  gender: "Femenino",
-  branch: "Guadalajara Centro",
+  gender: 'Femenino',
+  branch: 'Guadalajara Centro',
 };
 
 function getAge(birthday: Date): number {
@@ -71,13 +79,10 @@ function FileInput({
 
   return (
     <div
-      className={cn(
-        "relative border min-h-[200px] hover:border-gray-400 transition w-[300px] rounded-xl",
-        {
-          "border-dashed": !value,
-          "border-verde-salud bg-verde-salud/10": !!value,
-        },
-      )}
+      className={cn('relative border min-h-[200px] hover:border-gray-400 transition w-[300px] rounded-xl', {
+        'border-dashed': !value,
+        'border-verde-salud bg-verde-salud/10': !!value,
+      })}
     >
       {value && (
         <button
@@ -104,13 +109,13 @@ function FileInput({
       >
         {value ? (
           <div className="flex justify-center items-center w-full h-full">
-            {value.type.startsWith("image") && (
+            {value.type.startsWith('image') && (
               <img
                 src={URL.createObjectURL(value as unknown as File)}
                 className="object-cover w-full h-full rounded-xl"
               />
             )}
-            {value.type.startsWith("video") && (
+            {value.type.startsWith('video') && (
               <video
                 src={URL.createObjectURL(value as unknown as File)}
                 className="object-cover w-full h-full rounded-xl"
@@ -119,7 +124,7 @@ function FileInput({
                 loop
               />
             )}
-            {value.type === "application/dicom" && (
+            {value.type === 'application/dicom' && (
               <div className="flex flex-col gap-1 text-verde-salud">
                 <FontAwesomeIcon icon={faUserDoctor} className="text-5xl" />
                 {value.name}
@@ -191,7 +196,7 @@ const CrearReporte: React.FC<PatientCardProps> = ({
       const savedFiles = await Promise.all(
         files.map(async (file) => {
           return await client.files.upload(file).submit();
-        }),
+        })
       );
 
       const r = await client.reports
@@ -209,11 +214,11 @@ const CrearReporte: React.FC<PatientCardProps> = ({
       await client.reports
         .attachMedia(r._id, {
           content: savedFiles.map((file) => ({
-            type: file.contentType.startsWith("image")
-              ? "image"
-              : file.contentType.startsWith("video")
-                ? "video"
-                : "dicom",
+            type: file.contentType.startsWith('image')
+              ? 'image'
+              : file.contentType.startsWith('video')
+                ? 'video'
+                : 'dicom',
             id: file._id,
           })),
         })
@@ -234,7 +239,7 @@ const CrearReporte: React.FC<PatientCardProps> = ({
   };
 
   const addObservation = () => {
-    setObservations([...observations, ""]);
+    setObservations([...observations, '']);
   };
 
   const removeObservation = (index: number) => {
@@ -281,11 +286,7 @@ const CrearReporte: React.FC<PatientCardProps> = ({
             <div className="text-gray-600">{pPatient?.gender}</div>
           </div>
         </div>
-        <img
-          src="/images/women.png"
-          className=" aspect-square w-[200px] h-[200px]"
-          alt="logo"
-        />
+        <img src="/images/women.png" className=" aspect-square w-[200px] h-[200px]" alt="logo" />
       </div>
       <div className="flex flex-col w-full px-12 gap-2">
         <select
@@ -329,7 +330,7 @@ const CrearReporte: React.FC<PatientCardProps> = ({
               <input
                 value={observation}
                 onChange={(e) => handleObservationChange(index, e.target.value)}
-                placeholder={"Observaciones"}
+                placeholder={'Observaciones'}
                 className={`w-full font-medium border-2 rounded-md p-2 border-gray-400 placeholder:text-gray-400`}
               />
               {index === observations.length - 1 ? (
@@ -340,10 +341,7 @@ const CrearReporte: React.FC<PatientCardProps> = ({
                   />
                 </button>
               ) : (
-                <button
-                  onClick={() => removeObservation(index)}
-                  className="flex self-center"
-                >
+                <button onClick={() => removeObservation(index)} className="flex self-center">
                   <FontAwesomeIcon
                     icon={faMinus}
                     className="aspect-square border-2 rounded-md p-3 border-gray-400 placeholder:text-gray-400"
@@ -353,7 +351,6 @@ const CrearReporte: React.FC<PatientCardProps> = ({
             </div>
           ))}
         </div>
-        {/* <Input placeholder="Observaciones" onInputChange={setObservations} /> */}
 
         <div className="w-full font-medium rounded-md p-2 border-gray-400 placeholder:text-gray-400 grid grid-cols-3 gap-5">
           {files.map((file, index) => (
@@ -376,13 +373,19 @@ const CrearReporte: React.FC<PatientCardProps> = ({
           />
         </div>
 
-        {!saved ? (
-          <Button text="Guardar" onClick={handleSave} selected />
-        ) : (
-          <Button text="Publicar" selected onClick={handlePublish} />
-        )}
-      </div>
-    </ProfileLayout>
+<<<<<<< HEAD
+  {
+    !saved ? (
+      <Button text="Guardar" onClick={handleSave} selected />
+    ) : (
+    <Button text="Publicar" selected onClick={handlePublish} />
+  )
+  }
+=======
+        {saved ? <Button text="Guardar" onClick={handleSave} selected /> : <Button text="Publicar" selected />}
+>>>>>>> 80017314771d3ec604e9d5e8af39985f80ffd0d7
+      </div >
+    </ProfileLayout >
   );
 };
 
